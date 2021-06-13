@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { exp } from "react-native-reanimated";
 
 const storeData = async (key, value) => {
   try {
@@ -26,7 +25,6 @@ export async function saveList(todoList) {
   if (savedTodolists == undefined) {
     savedTodolists = [];
   }
-  savedTodolists = [];
   savedTodolists.push(todoList);
   await storeData("todoLists", savedTodolists);
   //await AsyncStorage.removeItem("@Urlaubsplaner_Jan_todoLists");
@@ -34,14 +32,32 @@ export async function saveList(todoList) {
 }
 
 export async function getList(todoList) {
-  var savedTodolists = await getData("todoLists");
-  let n = 0;
-  while (n < savedTodolists.length && savedTodolists[n].listName != todoList) {
-    n++;
+  try {
+    var savedTodolists = await getData("todoLists");
+    let n = 0;
+    while (
+      n < savedTodolists.length &&
+      savedTodolists[n].listName != todoList
+    ) {
+      n++;
+    }
+    return savedTodolists[n];
+  } catch (e) {
+    return undefined;
   }
-  return savedTodolists[n];
 }
 
 export async function getLists() {
   return await getData("todoLists");
+}
+
+export async function setCurrentList(todoListName, season) {
+  let todoList = await getList(todoListName);
+  todoList.season = season;
+  if (todoList != undefined) {
+    await storeData("currentTodoList", todoList);
+  }
+}
+export async function getCurrentList() {
+  return await getData("currentTodoList");
 }
