@@ -2,7 +2,12 @@
 
 ## Todos
 - [ ] Try to get .ipa file
+- [ ] Folding on Section checked
+- [ ] Edit lists in app
+- [ ] Export Lists
+- [ ] Export from History
 - [ ] User guidance
+
 - [x] History
 - [x] Todos with camera
 - [x] Todos without camera
