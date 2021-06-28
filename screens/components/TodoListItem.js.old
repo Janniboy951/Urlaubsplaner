@@ -1,0 +1,49 @@
+import React from "react";
+import { View } from "react-native";
+import { List, IconButton } from "react-native-paper";
+import { CheckBox } from "react-native-elements";
+import * as ImagePicker from "expo-image-picker";
+
+export const TodoListItem = ({
+  title,
+  forceCamera,
+  winterOnly,
+  itemNum,
+  partNum,
+}) => {
+  const [boxChecked, setBoxChecked] = React.useState(false);
+
+  if (winterOnly && todosData.season == "summer") {
+    return null;
+  }
+  console.log("Rendering Item");
+
+  return (
+    <List.Item
+      title={title}
+      right={(props) => (
+        <View style={{ flexDirection: "row" }}>
+          <IconButton
+            icon="image-outline"
+            onPress={async () => {
+              let img = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: false,
+              });
+              if (!img.cancelled) {
+                setCheckedState(partNum, itemNum, true);
+                todosData.listTodos[partNum].todos[itemNum].img = img.uri;
+              }
+            }}
+          />
+          {forceCamera ? null : (
+            <CheckBox
+              checked={getCheckedState(partNum, itemNum)}
+              onPress={() => switchCheckedState(partNum, itemNum)}
+            />
+          )}
+        </View>
+      )}
+    />
+  );
+};

@@ -61,3 +61,53 @@ export async function setCurrentList(todoListName, season) {
 export async function getCurrentList() {
   return await getData("currentTodoList");
 }
+
+export async function setCurrentListState(listState) {
+  await storeData("currentTodoListState", listState);
+}
+
+export async function clearCurrentList() {
+  await storeData("currentTodoListState", null);
+  await storeData("currentTodoList", null);
+  console.log("cleared");
+}
+
+export async function getCurrentListState() {
+  return await getData("currentTodoListState");
+}
+
+Number.prototype.pad = function (size) {
+  var s = String(this);
+  while (s.length < (size || 2)) {
+    s = "0" + s;
+  }
+  return s;
+};
+
+export async function addListToHistory(todolist, name) {
+  todolist = { todolist };
+  let now = new Date();
+  let currentDateTimeString =
+    now.getDate().pad(2) +
+    "." +
+    (now.getMonth() + 1).pad(2) +
+    "." +
+    now.getFullYear() +
+    " " +
+    now.getHours().pad(2) +
+    ":" +
+    now.getMinutes().pad(2);
+  todolist.completedTime = currentDateTimeString;
+  todolist.name = name;
+  let historyData = await getData("historyLists");
+  if (historyData == null) {
+    historyData = [];
+  }
+  historyData.push(todolist);
+  await storeData("historyLists", historyData);
+  console.log("saved");
+  console.log(historyData);
+}
+export async function getHistory() {
+  return await getData("historyLists");
+}

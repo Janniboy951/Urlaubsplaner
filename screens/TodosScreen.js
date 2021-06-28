@@ -1,41 +1,38 @@
 import React from "react";
-import { FlatList, Text, View, StatusBar, Dimensions } from "react-native";
+import { FlatList, View, StatusBar, AppState, Text } from "react-native";
 import {
-  Button,
-  List,
-  IconButton,
-  ProgressBar,
-  Colors,
-} from "react-native-paper";
-import { getCurrentList } from "../helper/DataManager";
-import { CheckBox } from "react-native-elements";
+  getCurrentList,
+  setCurrentListState,
+  clearCurrentList,
+  getCurrentListState,
+  addListToHistory,
+} from "../helper/DataManager";
+import { Button, Dialog, Portal } from "react-native-paper";
+import { TodoListPart } from "./components/TodoListPart";
+import styles from "../styles/TodosStyle";
+import { Image } from "react-native-elements";
 
 export default React.memo(TodosScreen);
 function TodosScreen({ navigation }) {
   const [todosData, setTodosData] = React.useState({});
   const [todosNum, setTodosNum] = React.useState(0);
-  const [totalProgress, setTotalProgress] = React.useState(0);
-  const [expandedPart, setExpandedPart] = React.useState("");
-
-  function getCheckedState(partNum, itemNum) {
-    return todosData.listTodos[partNum].todos[itemNum].checked == true;
-  }
-
-  function switchCheckedState(partNum, itemNum) {
-    let newState = !getCheckedState(partNum, itemNum);
-    todosData.listTodos[partNum].todos[itemNum].checked = newState;
-    if (newState) {
-      setTotalProgress(totalProgress + 0.1);
-    } else {
-      setTotalProgress(totalProgress - 0.1);
-    }
-  }
+  const [finishedDialog, showFinishedDialog] = React.useState(false);
+  const hideFinishedDialog = () => showFinishedDialog(false);
+  const partProgress = {};
+  let globalState = [];
+  let [todosAvailable, setTodosAvailable] = React.useState(true);
 
   //#region Load Current Todolist on focus
   const getTodosData = async () => {
-    console.log("Getting Data");
     let todoNum = 0;
     let data = await getCurrentList();
+    if (data == null) {
+      setTodosAvailable(false);
+      return;
+    } else {
+      setTodosAvailable(true);
+    }
+    let savedData = await getCurrentListState();
     for (let i = 0; i < data.listTodos.length; i++) {
       if (typeof data.listTodos[i] == "string") {
         data.listTodos[i] = JSON.parse(data.listTodos[i]);
@@ -51,6 +48,9 @@ function TodosScreen({ navigation }) {
     for (let j = 0; j < data.listTodos.length; j++) {
       todoNum += data.listTodos[j].todos.length;
       for (let k = 0; k < data.listTodos[j].todos.length; k++) {
+        if (savedData[j] != null && savedData[j][k] != null) {
+          data.listTodos[j].todos[k] = savedData[j][k];
+        }
         data.listTodos[j].todos[k].id = k;
       }
     }
@@ -58,97 +58,70 @@ function TodosScreen({ navigation }) {
     setTodosNum(todoNum);
   };
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      getTodosData();
+    const unsubscribe = navigation.addListener("focus", async () => {
+      await getTodosData();
     });
+    navigation.addListener("blur", () => {
+      saveCurrentData();
+    });
+
     return unsubscribe;
   }, [navigation]);
+
+  const saveCurrentData = () => {
+    setCurrentListState(globalState);
+  };
+
+  AppState.addEventListener("change", (nextAppState) => {
+    if (nextAppState == "background") {
+      saveCurrentData();
+    }
+  });
   //#endregion Load Current Todolist on focus
 
-  const TodoListItem = ({
-    title,
-    forceCamera,
-    winterOnly,
-    itemNum,
-    partNum,
-  }) => {
-    if (winterOnly && todosData.season == "summer") {
-      return null;
+  const handleChildDataChange = async (data) => {
+    partProgress[data.partNum] = 0 + data.progress;
+    let progressSum = 0;
+    for (let x in partProgress) {
+      progressSum += partProgress[x];
     }
-    console.log("Rendering Item");
-
-    return (
-      <List.Item
-        title={title}
-        right={(props) => (
-          <View style={{ flexDirection: "row" }}>
-            <IconButton icon="camera" onPress={() => console.log(title)} />
-            {forceCamera ? null : (
-              <CheckBox
-                checked={getCheckedState(partNum, itemNum)}
-                onPress={() => switchCheckedState(partNum, itemNum)}
-              />
-            )}
-          </View>
-        )}
-      />
-    );
+    globalState[data.partNum] = {
+      name: data.partName,
+      id: data.partNum,
+      todos: data.partData,
+    };
+    if (progressSum == todosNum) {
+      setTodosAvailable(false);
+      console.log("Falsed");
+      showFinishedDialog(true);
+      globalState[data.partNum] = {
+        name: data.partName,
+        id: data.partNum,
+        todos: data.partData,
+      };
+      await addListToHistory(globalState, todosData.listName);
+      await clearCurrentList();
+    }
   };
 
-  const MemodTodoListItem = React.memo(TodoListItem);
-
-  const TodoListPart = ({ todos }) => {
-    console.log("Render TodoListParts");
-    return (
-      <List.Accordion
-        title={todos.name}
-        left={(props) => (
-          <List.Icon {...props} icon="checkbox-blank-circle-outline" /> //check-circle-outline      checkbox-marked-circle-outline
-        )}
-        onPress={() => {
-          if (expandedPart != todos.id) {
-            setExpandedPart(todos.id);
-          } else {
-            setExpandedPart(null);
-          }
-        }}
-        expanded={expandedPart == todos.id}
-      >
-        {todos.todos.map((todo, i) => (
-          <MemodTodoListItem
-            title={todo.todoName}
-            forceCamera={todo.forceImage}
-            winterOnly={todo.winterOnly}
-            itemNum={todo.id}
-            partNum={todos.id}
-            key={todo.id}
-          />
-        ))}
-        {/* <FlatList
-        style={{ width: "100%" }}
-        data={todos.todos}
-        renderItem={({ item }) => (
-          <TodoListItem
-            title={item.todoName}
-            forceCamera={item.forceImage}
-            winterOnly={item.winterOnly}
-            itemNum={item.id}
-            partNum={todos.id}
-          />
-        )}
-        keyExtractor={(item) => item.id}
-      /> */}
-      </List.Accordion>
-    );
-  };
   const MemodTodoListPart = React.memo(TodoListPart);
 
   const SaveTodoListPart = ({ todoSection }) => {
     try {
-      return <MemodTodoListPart todos={JSON.parse(todoSection)} />;
+      return (
+        <MemodTodoListPart
+          todos={JSON.parse(todoSection)}
+          dataHandler={handleChildDataChange}
+        />
+      );
     } catch (e) {
       try {
-        return <MemodTodoListPart todos={todoSection} />;
+        return (
+          <MemodTodoListPart
+            todos={todoSection}
+            dataHandler={handleChildDataChange}
+          />
+        );
       } catch (error) {
         console.log("Coudld not import" + todoSection.toString());
         return null;
@@ -157,36 +130,50 @@ function TodosScreen({ navigation }) {
   };
 
   const MemodSaveTodoListPart = React.memo(SaveTodoListPart);
+  console.log("render");
+  console.log(todosAvailable);
 
-  console.log("Render");
+  if (todosAvailable == false) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Portal>
+          <Dialog visible={finishedDialog} onDismiss={hideFinishedDialog}>
+            <Dialog.Title style={styles.centeredDialog}>
+              Abgeschlossen!
+            </Dialog.Title>
+            <Dialog.Content style={styles.centeredDialog}>
+              <Image
+                resizeMode="contain"
+                source={require("../assets/happy_smiley.png")}
+                style={{
+                  width: "90%",
+                  // height: undefined,
+                  aspectRatio: 1,
+                  //height: 500,
+                }}
+              />
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideFinishedDialog}>Schließen</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        <Text>Bitte aktiviere eine Liste in der Rubrik "Listen"</Text>
+      </View>
+    );
+  }
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      {/* <ProgressBar
-        progress={totalProgress}
-        color="#4afa26"
-        style={{
-          backgroundColor: "#f48588",
-          height: 10,
-          width: Dimensions.get("window").width,
-        }}
-      /> */}
       <StatusBar backgroundColor="#f4f4f4" barStyle="dark-content" />
-
       <FlatList
         style={{ width: "100%" }}
         data={todosData.listTodos}
-        renderItem={({ item }) => <MemodSaveTodoListPart todoSection={item} />}
+        renderItem={({ item }) => (
+          <MemodSaveTodoListPart todoSection={item} season={todosData.season} />
+        )}
         keyExtractor={(item) => item.id.toString()}
         initialNumToRender={40}
       />
-      <Button
-        onPress={() => {
-          console.log(todosData);
-          console.log(todosNum);
-        }}
-      >
-        Test
-      </Button>
     </View>
   );
 }
