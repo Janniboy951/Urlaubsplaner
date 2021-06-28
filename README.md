@@ -12,7 +12,7 @@
 
 ## CSV Syntax
 Erste Zeille wird ignoriert  
-Die Leerzeichen sind nur zur veranschaulichung
+Die Leerzeichen dienen nur der Veranschaulichung
 ```
 Abschnitt;Todo ;Foto erzwingen;nur Winter
 Teil 1   ;     ;              ;
