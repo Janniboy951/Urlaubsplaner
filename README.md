@@ -1,6 +1,5 @@
 # Urlaubsplaner
 
 Todos
-
-[ ] Try to get .ipa file
-[ ] User guidance
+- [x] Try to get .ipa file
+- [x] User guidance
