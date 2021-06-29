@@ -3,7 +3,6 @@
 ## Todos
 - [ ] Try to get .ipa file
 - [ ] Folding on Section checked
-- [ ] Edit lists in app
 - [ ] Export Lists
 - [ ] Export from History (images to zip?)
 - [ ] User guidance
