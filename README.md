@@ -1,7 +1,8 @@
 # Urlaubsplaner
 
 ## Todos
-- [ ] Try to get .ipa file
+
+- [-] Try to get .ipa file
 - [ ] Folding on Section checked
 - [ ] Edit lists in app
 - [ ] Export Lists
@@ -16,9 +17,11 @@
 - [x] Lists Overview
 
 ## CSV Syntax
+
 Erste Zeille wird ignoriert  
 Die Leerzeichen dienen nur der Veranschaulichung
-```
+
+````
 Abschnitt;Todo ;Foto erzwingen;nur Winter
 Teil 1   ;     ;              ;
          ;Todo1;x             ;
@@ -26,4 +29,5 @@ Teil 1   ;     ;              ;
          ;Todo3;x             ;x
 Teil2    ;     ;              ;
          ;Todo4;x             ;x```
-         
+
+````

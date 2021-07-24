@@ -62,13 +62,12 @@ function HistoryScreen({ navigation }) {
 
       <TouchableOpacity
         style={styles.listItemEditButton}
-        onPress={() => console.log(1)}
+        // onPress={() => console.log(1)}
       >
         <Icon name="delete" color="#777" size={40} />
       </TouchableOpacity>
     </TouchableOpacity>
   );
-  console.log(historyData);
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <StatusBar backgroundColor="#f4f4f4" barStyle="dark-content" />

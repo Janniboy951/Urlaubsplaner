@@ -69,7 +69,6 @@ export async function setCurrentListState(listState) {
 export async function clearCurrentList() {
   await storeData("currentTodoListState", null);
   await storeData("currentTodoList", null);
-  console.log("cleared");
 }
 
 export async function getCurrentListState() {
@@ -105,8 +104,6 @@ export async function addListToHistory(todolist, name) {
   }
   historyData.push(todolist);
   await storeData("historyLists", historyData);
-  console.log("saved");
-  console.log(historyData);
 }
 export async function getHistory() {
   return await getData("historyLists");

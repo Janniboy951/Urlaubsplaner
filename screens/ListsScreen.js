@@ -14,6 +14,9 @@ import {
   Paragraph,
   Button,
   RadioButton,
+  Menu,
+  Divider,
+  Provider,
 } from "react-native-paper";
 import styles from "../styles/ListsStyles";
 import AddListScreen from "../screens/AddListScreen";
@@ -47,7 +50,6 @@ export default function ListsStackScreen() {
 
 function ListsScreen({ navigation, props }) {
   const [listsData, setListsData] = React.useState({});
-  const [visibleMenu, setvisibleMenu] = React.useState("");
   const [visibleDialog, setVisibleDialog] = React.useState("");
   const [selectedSeason, setSelectedSeason] = React.useState("summer");
 
@@ -125,52 +127,80 @@ function ListsScreen({ navigation, props }) {
   //#endregion
 
   //#region ListsItem
-  const Item = ({ title, description, image }) => (
-    <TouchableOpacity
-      style={styles.item}
-      onPress={() => setVisibleDialog(title)}
-    >
-      <SelectListDialog title={title} />
-      <Image
-        resizeMode="cover"
-        style={styles.listItemImage}
-        source={{ uri: image }}
-      />
-      <View style={{ flexDirection: "column", marginStart: "3%" }}>
-        <Text style={styles.listItemTitle}>{title}</Text>
-        <Text>{description}</Text>
-      </View>
+  const Item = ({ title, description, image }) => {
+    const [visible, setVisible] = React.useState(false);
 
+    const openMenu = () => setVisible(true);
+
+    const closeMenu = () => setVisible(false);
+
+    return (
       <TouchableOpacity
-        style={styles.listItemEditButton}
-        onPress={() => console.log(1)}
+        style={styles.item}
+        onPress={() => setVisibleDialog(title)}
       >
-        <Icon name="playlist-edit" color="#777" size={40} />
+        <SelectListDialog title={title} />
+        <View
+          style={{
+            flexDirection: "row",
+            alignSelf: "flex-start",
+            marginStart: 0,
+          }}
+        >
+          <Image
+            resizeMode="cover"
+            style={styles.listItemImage}
+            source={{ uri: image }}
+          />
+          <View style={{ flexDirection: "column", marginStart: 10 }}>
+            <Text style={styles.listItemTitle}>{title}</Text>
+            <Text>{description}</Text>
+          </View>
+        </View>
+        <Menu
+          visible={visible}
+          onDismiss={closeMenu}
+          anchor={
+            <TouchableOpacity
+              onPress={openMenu}
+              style={styles.listItemEditButton}
+            >
+              <Icon name="playlist-edit" color="#777" size={40} />
+            </TouchableOpacity>
+          }
+        >
+          <Menu.Item onPress={() => {}} title="Liste bearbeiten" />
+          <Menu.Item onPress={() => {}} title="Todos bearbeiten" />
+          <Divider />
+          <Menu.Item onPress={() => {}} title="Löschen" />
+        </Menu>
       </TouchableOpacity>
-    </TouchableOpacity>
-  );
+    );
+  };
   //#endregion ListsItem
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <StatusBar backgroundColor="#f4f4f4" barStyle="dark-content" />
-      <FAB
-        style={styles.fab}
-        icon="plus"
-        onPress={() => navigation.navigate("addList")}
-      />
-      <FlatList
-        style={{ width: "100%" }}
-        data={listsData}
-        renderItem={({ item }) => (
-          <Item
-            title={item.listName}
-            description={item.listDescription}
-            image={item.listImage}
-          />
-        )}
-        keyExtractor={(item) => item.listName}
-      />
+      <Provider>
+        <StatusBar backgroundColor="#f4f4f4" barStyle="dark-content" />
+        <FAB
+          style={styles.fab}
+          icon="plus"
+          onPress={() => navigation.navigate("addList")}
+        />
+        <FlatList
+          style={{ width: "100%" }}
+          data={listsData}
+          renderItem={({ item }) => (
+            <Item
+              title={item.listName}
+              description={item.listDescription}
+              image={item.listImage}
+            />
+          )}
+          keyExtractor={(item) => item.listName}
+        />
+      </Provider>
     </View>
   );
 }

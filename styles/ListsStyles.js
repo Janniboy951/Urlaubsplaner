@@ -17,8 +17,9 @@ export default StyleSheet.create({
     marginVertical: 1,
     marginHorizontal: 0,
     width: "100%",
+    minWidth: "100%",
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "flex-start",
   },
   listItemTitle: {
     fontSize: 16,
@@ -32,11 +33,13 @@ export default StyleSheet.create({
     textAlign: "center",
   },
   listItemImage: {
+    alignSelf: "flex-start",
     width: 50,
     height: 50,
     borderRadius: 50 / 2,
   },
   listItemEditButton: {
+    justifyContent: "flex-end",
     marginStart: "auto",
     marginEnd: 0,
     alignSelf: "flex-end",

@@ -91,7 +91,7 @@ export default function AddListScreen({ route, navigation }) {
     );
   };
 
-  console.log(todoData);
+
   return (
     <View
       style={{

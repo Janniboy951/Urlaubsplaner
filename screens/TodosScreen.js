@@ -92,7 +92,7 @@ function TodosScreen({ navigation }) {
     };
     if (progressSum == todosNum) {
       setTodosAvailable(false);
-      console.log("Falsed");
+      // console.log("Falsed");
       showFinishedDialog(true);
       globalState[data.partNum] = {
         name: data.partName,
@@ -123,15 +123,14 @@ function TodosScreen({ navigation }) {
           />
         );
       } catch (error) {
-        console.log("Coudld not import" + todoSection.toString());
+        // console.log("Coudld not import" + todoSection.toString());
         return null;
       }
     }
   };
 
   const MemodSaveTodoListPart = React.memo(SaveTodoListPart);
-  console.log("render");
-  console.log(todosAvailable);
+
 
   if (todosAvailable == false) {
     return (
@@ -171,8 +170,9 @@ function TodosScreen({ navigation }) {
         renderItem={({ item }) => (
           <MemodSaveTodoListPart todoSection={item} season={todosData.season} />
         )}
+        removeClippedSubviews={true}
         keyExtractor={(item) => item.id.toString()}
-        initialNumToRender={40}
+        initialNumToRender={10}
       />
     </View>
   );
