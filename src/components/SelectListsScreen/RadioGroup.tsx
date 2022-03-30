@@ -59,7 +59,7 @@ function SelectListRadio({ navigation }: any) {
 	const [addListAlertVisible, setAddListAlertVisible] = React.useState(false);
 
 	useFocusEffect(() => {
-		if (todoLists.length > 0) {
+		if (todoLists.length > 0 && value == "") {
 			setValue(todoLists[0]!.listID);
 			dispatch(setCurrentTodoList(todoLists[0]!.listID));
 		}
