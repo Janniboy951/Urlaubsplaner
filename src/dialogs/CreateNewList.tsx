@@ -5,17 +5,16 @@ import { useDispatch } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import { test } from "@/ExampleData";
 import { TodoList } from "@/Types";
+import CreateNewListTextInput from "./CreateNewListTextInput";
 
 function CreateNewListDialog({ visible, onDismiss }: { visible: boolean; onDismiss: () => void }) {
 	console.log("rerender CreateNewListDialog");
-	const [newListName, setNewListName] = React.useState("");
+	const textInputRef = React.useRef();
 
-	const dispatch = useDispatch();
-
-	function createNewList() {
-		dispatch(addTodoList({ listID: uuidv4(), listName: newListName, todos: [] } as TodoList));
+	function okPress() {
+		// @ts-ignore
+		textInputRef?.current?.createNewList();
 		onDismiss();
-		setNewListName("");
 	}
 
 	return (
@@ -23,15 +22,10 @@ function CreateNewListDialog({ visible, onDismiss }: { visible: boolean; onDismi
 			<Dialog visible={visible} onDismiss={onDismiss}>
 				<Dialog.Title>Neue Liste hinzufügen</Dialog.Title>
 				<Dialog.Content>
-					<TextInput
-						label="Name"
-						value={newListName}
-						mode="outlined"
-						onChangeText={(text) => setNewListName(text)}
-					/>
+					<CreateNewListTextInput ref={textInputRef} />
 				</Dialog.Content>
 				<Dialog.Actions>
-					<Button onPress={createNewList}>Ok</Button>
+					<Button onPress={okPress}>Ok</Button>
 				</Dialog.Actions>
 			</Dialog>
 		</Portal>
