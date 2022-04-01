@@ -1,10 +1,10 @@
 export interface TodoList {
 	listName: string;
 	listID: string;
-	todos: TodoParts[];
+	todos: TodoPart[];
 }
 
-export interface TodoParts {
+export interface TodoPart {
 	id: string;
 	title: string;
 	todos: Todo[];

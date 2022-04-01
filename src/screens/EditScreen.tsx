@@ -8,6 +8,8 @@ import React, { useEffect } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { Appbar, Menu } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
+import { TodoPart } from "@/Types";
+import { v4 as uuidv4 } from "uuid";
 
 function EditScreen({ navigation, route }: any) {
 	const [listData, setListData] = React.useState<any[]>([]);
@@ -19,6 +21,7 @@ function EditScreen({ navigation, route }: any) {
 	function WindowHeader({ listName, goBack }: { listName: string; goBack: any }) {
 		const [menuVisible, setMenuVisible] = React.useState(false);
 		function imported(v: any) {
+			console.log(v);
 			dispatch(
 				alterCurrentTodoList({
 					...currentTodoList,
@@ -51,8 +54,18 @@ function EditScreen({ navigation, route }: any) {
 				>
 					<Menu.Item
 						title="Importieren"
-						onPress={() => {
-							readFileAsync().then(imported);
+						onPress={async () => {
+							const v = await readFileAsync();
+							v.forEach((todoPart: TodoPart) => {
+								todoPart.id = uuidv4();
+							});
+
+							dispatch(
+								alterCurrentTodoList({
+									...currentTodoList,
+									todos: [...currentTodoList.todos, ...v],
+								})
+							);
 							setMenuVisible(false);
 						}}
 					/>
