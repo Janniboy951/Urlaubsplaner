@@ -31,8 +31,8 @@ function todoListReducer(state = initialState, action: { type: any; payload: any
 				currentTodoList: JSON.parse(JSON.stringify(action.payload)),
 			};
 		case ActionTypes.SAVE_CURRENT_TODOLIST:
-			const pos = state.todoLists.findIndex((v: any) => v.listID == action.payload.listID);
-			const newTodoLists: any = state.todoLists.slice(0);
+			let pos = state.todoLists.findIndex((v: any) => v.listID == action.payload.listID);
+			let newTodoLists: any = state.todoLists.slice(0);
 			newTodoLists.splice(pos, 1, action.payload);
 			return { ...state, todoLists: newTodoLists };
 
@@ -51,6 +51,14 @@ function todoListReducer(state = initialState, action: { type: any; payload: any
 			return {
 				...state,
 				currentFinishedAmount: 0,
+			};
+		case ActionTypes.DELETE_TODOLIST:
+			pos = state.todoLists.findIndex((v: any) => v.listID == action.payload);
+			newTodoLists = state.todoLists.slice(0);
+			newTodoLists.splice(pos, 1);
+			return {
+				...state,
+				todoLists: newTodoLists,
 			};
 		default:
 			return state;

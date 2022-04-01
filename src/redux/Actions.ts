@@ -6,6 +6,7 @@ export enum ActionTypes {
 	CHANGE_FINISHED_AMOUNT = "CHANGE_FINISHED_AMOUNT",
 	RESET_FINISHED_AMOUNT = "RESET_FINISHED_AMOUNT",
 	ALTER_CURRENT_TODOLIST = "ALTER_CURRENT_TODOLIST",
+	DELETE_TODOLIST = "DELETE_TODOLIST",
 }
 
 export const saveCurrentTodoList = (todoList: any) => ({
@@ -39,4 +40,9 @@ export const changeFinishedAmount = (amount: 1 | -1) => ({
 });
 export const resetFinishedAmount = () => ({
 	type: ActionTypes.RESET_FINISHED_AMOUNT,
+});
+
+export const deleteTodoList = (id: string) => ({
+	type: ActionTypes.DELETE_TODOLIST,
+	payload: id,
 });

@@ -1,4 +1,5 @@
 import CreateNewListDialog from "@/dialogs/CreateNewList";
+import DeleteListDialog from "@/dialogs/DeleteList";
 import { setCurrentTodoList } from "@/redux/Actions";
 import { RootState } from "@/redux/Store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -13,11 +14,13 @@ function RadioItem({
 	item,
 	onSelect,
 	onEdit,
+	onDelete,
 }: {
 	checked: boolean;
 	item: any;
 	onSelect: (id: string) => void;
 	onEdit: (id: string) => void;
+	onDelete: (id: string) => void;
 }) {
 	console.log("rerender", "RadioItem");
 	return (
@@ -30,9 +33,23 @@ function RadioItem({
 				/>
 				<Text style={styles.radioButtonText}>{item.listName}</Text>
 			</View>
-			<TouchableOpacity onPress={() => onEdit(item.listID)}>
-				<MaterialCommunityIcons name={"pencil"} size={25} style={styles.radioButtonEdit} />
-			</TouchableOpacity>
+			<View style={styles.editDeleteView}>
+				<TouchableOpacity onPress={() => onEdit(item.listID)}>
+					<MaterialCommunityIcons
+						name="pencil"
+						size={25}
+						style={styles.radioButtonEdit}
+					/>
+				</TouchableOpacity>
+				<TouchableOpacity onPress={() => onDelete(item.listID)}>
+					<MaterialCommunityIcons
+						name="delete"
+						size={25}
+						style={styles.radioButtonEdit}
+						color="darkred"
+					/>
+				</TouchableOpacity>
+			</View>
 		</TouchableOpacity>
 	);
 }
@@ -44,6 +61,11 @@ function SelectListRadio({ navigation }: any) {
 
 	// Callbacks
 	const dismissCreateNewList = useCallback(() => setAddListAlertVisible(false), []);
+	const dismissDeleteList = useCallback(() => setDeleteListAlertVisible(false), []);
+	const showDeleteListAlert = useCallback((id: string) => {
+		setDeleteListID(id);
+		setDeleteListAlertVisible(true);
+	}, []);
 	const selectCurrentList = useCallback((id) => {
 		setValue(id);
 		dispatch(setCurrentTodoList(id));
@@ -57,6 +79,8 @@ function SelectListRadio({ navigation }: any) {
 	const todoLists: any[] = useSelector((state: RootState) => state.todoListReducer.todoLists);
 	const [value, setValue] = React.useState("");
 	const [addListAlertVisible, setAddListAlertVisible] = React.useState(false);
+	const [deleteListAlertVisible, setDeleteListAlertVisible] = React.useState(false);
+	const [deleteListID, setDeleteListID] = React.useState("");
 
 	useFocusEffect(() => {
 		if (todoLists.length > 0 && value == "") {
@@ -85,6 +109,7 @@ function SelectListRadio({ navigation }: any) {
 				item={item}
 				onSelect={selectCurrentList}
 				onEdit={editList}
+				onDelete={showDeleteListAlert}
 			/>
 		);
 	}
@@ -99,6 +124,11 @@ function SelectListRadio({ navigation }: any) {
 				ListFooterComponent={listFooter}
 			/>
 			<CreateNewListDialog visible={addListAlertVisible} onDismiss={dismissCreateNewList} />
+			<DeleteListDialog
+				visible={deleteListAlertVisible}
+				onDismiss={dismissDeleteList}
+				id={deleteListID}
+			/>
 		</>
 	);
 }
@@ -130,6 +160,9 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		marginTop: "1%",
+	},
+	editDeleteView: {
+		flexDirection: "row",
 	},
 });
 
