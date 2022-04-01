@@ -22,7 +22,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon_1.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "de.plisjan.urlaubsplaner"
