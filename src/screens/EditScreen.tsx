@@ -74,7 +74,7 @@ function EditScreen({ navigation, route }: any) {
 						onPress={() => {
 							shareFileAsync(
 								JSON.stringify(currentTodoList.todos),
-								`Export-${listName.toString()} ${getCurrentDateTimeSting()}.json`
+								`Export-${currentTodoList.listName.toString()} ${getCurrentDateTimeSting()}.json`
 							);
 							setMenuVisible(false);
 						}}
