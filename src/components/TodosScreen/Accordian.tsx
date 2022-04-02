@@ -157,11 +157,7 @@ function AccordianList({
 				data={accordianListData}
 				renderItem={_renderAccordianListItem}
 				keyExtractor={_keyExtractor}
-				ListFooterComponent={
-					isFooterEnabled ? (
-						<AddNewGroup setData={setAccordianListData} data={accordianListData} />
-					) : null
-				}
+				ListFooterComponent={isFooterEnabled ? <AddNewGroup /> : null}
 			></FlatList>
 		</View>
 	);

@@ -3,6 +3,9 @@ import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { View, TouchableOpacity, Text, StyleSheet, FlatList } from "react-native";
 import AddElement from "../EditListsScreen/AddElement";
 import AddNewGroup from "../EditListsScreen/AddGroup";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/Store";
+import { alterCurrentTodoList } from "@/redux/Actions";
 
 // type declaration
 type AccordianData = {
@@ -41,10 +44,12 @@ function AccordianHead({
 	expanded,
 	title,
 	checked,
+	onDelete,
 }: {
 	expanded: boolean;
 	title: string;
 	checked: boolean;
+	onDelete: () => void;
 }) {
 	return (
 		<>
@@ -52,7 +57,17 @@ function AccordianHead({
 				<PartCheckBox checked={checked} />
 				<Text style={styles.title}>{title}</Text>
 			</View>
-			<FontAwesome name={expanded ? "angle-up" : "angle-down"} size={30} color="#777" />
+			<View style={{ flexDirection: "row" }}>
+				<FontAwesome
+					name={expanded ? "angle-up" : "angle-down"}
+					size={30}
+					color="#777"
+					style={{ marginEnd: 10 }}
+				/>
+				<TouchableOpacity onPress={onDelete}>
+					<MaterialCommunityIcons name="delete-outline" size={30} color="#b00" />
+				</TouchableOpacity>
+			</View>
 		</>
 	);
 }
@@ -62,11 +77,13 @@ function Accordian({
 	data,
 	footerEnabled,
 	accordianRenderItem,
+	onDelete,
 }: {
 	title: string;
 	data: AccordianElemenetData[];
 	footerEnabled: boolean;
 	accordianRenderItem: any;
+	onDelete: () => void;
 }) {
 	const [expanded, setExpanded] = React.useState(false);
 	const [headChecked, setHeadChecked] = React.useState(
@@ -90,7 +107,12 @@ function Accordian({
 	return (
 		<View style={{ width: "100%" }}>
 			<TouchableOpacity style={styles.row} onPress={() => setExpanded(!expanded)}>
-				<AccordianHead expanded={expanded} checked={headChecked} title={title} />
+				<AccordianHead
+					expanded={expanded}
+					checked={headChecked}
+					title={title}
+					onDelete={onDelete}
+				/>
 			</TouchableOpacity>
 			<View style={styles.parentHr} />
 			{expanded && (
@@ -138,11 +160,22 @@ function AccordianList({
 	if (setAccordianListData == undefined) {
 		setAccordianListData = () => {};
 	}
+	const { currentTodoList } = useSelector((state: RootState) => state.todoListReducer);
+
+	const dispatch = useDispatch();
+	function deletePart(id: string) {
+		const pos = currentTodoList.todos.findIndex((v: any) => v.id == id);
+		const newTodos: any = currentTodoList.todos.slice(0);
+		newTodos.splice(pos, 1);
+		console.log("asd");
+		dispatch(alterCurrentTodoList({ ...currentTodoList, todos: newTodos }));
+	}
 
 	// console.log("Load ACCORDIANLIST");
 	function _renderAccordianListItem({ item }: { item: AccordianData }): JSX.Element {
 		return (
 			<MemorizedAccordian
+				onDelete={() => deletePart(item.id)}
 				title={item.title}
 				data={item.todos}
 				footerEnabled={isFooterEnabled == true}
@@ -157,11 +190,7 @@ function AccordianList({
 				data={accordianListData}
 				renderItem={_renderAccordianListItem}
 				keyExtractor={_keyExtractor}
-				ListFooterComponent={
-					isFooterEnabled ? (
-						<AddNewGroup setData={setAccordianListData} data={accordianListData} />
-					) : null
-				}
+				ListFooterComponent={isFooterEnabled ? <AddNewGroup /> : null}
 			></FlatList>
 		</View>
 	);
