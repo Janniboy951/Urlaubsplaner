@@ -1,11 +1,10 @@
-import React, { Dispatch, memo, SetStateAction } from "react";
+import DeleteGroupDialog from "@/dialogs/DeleteGroup";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { View, TouchableOpacity, Text, StyleSheet, FlatList } from "react-native";
+import React, { Dispatch, memo, SetStateAction } from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useDispatch } from "react-redux";
 import AddElement from "../EditListsScreen/AddElement";
 import AddNewGroup from "../EditListsScreen/AddGroup";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/Store";
-import { alterCurrentTodoList } from "@/redux/Actions";
 
 // type declaration
 type AccordianData = {
@@ -160,15 +159,13 @@ function AccordianList({
 	if (setAccordianListData == undefined) {
 		setAccordianListData = () => {};
 	}
-	const { currentTodoList } = useSelector((state: RootState) => state.todoListReducer);
 
-	const dispatch = useDispatch();
+	const [deleteAlertVisible, setDeleteAlertVisible] = React.useState(false);
+	const [deleteID, setDeleteID] = React.useState("");
+
 	function deletePart(id: string) {
-		const pos = currentTodoList.todos.findIndex((v: any) => v.id == id);
-		const newTodos: any = currentTodoList.todos.slice(0);
-		newTodos.splice(pos, 1);
-		console.log("asd");
-		dispatch(alterCurrentTodoList({ ...currentTodoList, todos: newTodos }));
+		setDeleteID(id);
+		setDeleteAlertVisible(true);
 	}
 
 	// console.log("Load ACCORDIANLIST");
@@ -192,6 +189,11 @@ function AccordianList({
 				keyExtractor={_keyExtractor}
 				ListFooterComponent={isFooterEnabled ? <AddNewGroup /> : null}
 			></FlatList>
+			<DeleteGroupDialog
+				visible={deleteAlertVisible}
+				onDismiss={() => setDeleteAlertVisible(false)}
+				id={deleteID}
+			/>
 		</View>
 	);
 }
