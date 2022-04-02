@@ -34,7 +34,7 @@ function EditScreen({ navigation, route }: any) {
 		return (
 			<Appbar.Header style={{ backgroundColor: "#fff" }}>
 				<Appbar.BackAction onPress={goBack} />
-				<Appbar.Content title="Liste bearbeiten" subtitle={listName} />
+				<Appbar.Content title="Liste bearbeiten" subtitle={currentTodoList.listName} />
 				<Appbar.Action
 					icon="content-save"
 					onPress={() => {
