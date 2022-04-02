@@ -1,5 +1,6 @@
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
+import { isAvailableAsync as isShareAvailableAsync, shareAsync } from "expo-sharing";
 import { getDocumentAsync } from "expo-document-picker";
 
 export async function saveFileAsync(text: string, folder: string, filename: string) {
@@ -15,6 +16,19 @@ export async function saveFileAsync(text: string, folder: string, filename: stri
 
 	// MediaLibrary usually saves to /Pictures/ or /DCIM/ so adding ../ to get to the Home folder
 	await MediaLibrary.createAlbumAsync("../" + folder, asset, false);
+}
+
+export async function shareFileAsync(text: string, filename: string) {
+	if (await isShareAvailableAsync()) {
+		let fileUri = FileSystem.documentDirectory + filename;
+		await FileSystem.writeAsStringAsync(fileUri, text, {
+			encoding: FileSystem.EncodingType.UTF8,
+		});
+		await shareAsync(fileUri, {
+			dialogTitle: `Save ${filename}`,
+			mimeType: "application/json",
+		});
+	}
 }
 
 export async function readFileAsync() {

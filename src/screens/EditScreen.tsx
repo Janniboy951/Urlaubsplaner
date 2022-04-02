@@ -1,7 +1,7 @@
 import EditTodo from "@/components/EditListsScreen/EditTodo";
 import Accordian from "@/components/EditListsScreen/Accordian";
 import { getCurrentDateTimeSting } from "@/helper/Date";
-import { readFileAsync, saveFileAsync } from "@/helper/FileManager";
+import { readFileAsync, shareFileAsync } from "@/helper/FileManager";
 import { alterCurrentTodoList, saveCurrentTodoList } from "@/redux/Actions";
 import { RootState } from "@/redux/Store";
 import React, { useEffect } from "react";
@@ -72,14 +72,9 @@ function EditScreen({ navigation, route }: any) {
 					<Menu.Item
 						title="Exportieren"
 						onPress={() => {
-							saveFileAsync(
-								JSON.stringify(currentTodoList.todos), // edited
-								"Urlaubsplaner-Export",
-								"Export-" +
-									listName.toString() +
-									" " +
-									getCurrentDateTimeSting() +
-									".json.txt"
+							shareFileAsync(
+								JSON.stringify(currentTodoList.todos),
+								`Export-${listName.toString()} ${getCurrentDateTimeSting()}.json`
 							);
 							setMenuVisible(false);
 						}}
