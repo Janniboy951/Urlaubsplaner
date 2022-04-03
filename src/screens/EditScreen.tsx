@@ -8,6 +8,7 @@ import { Appbar, Menu } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { TodoPart } from "@/Types";
 import { v4 as uuidv4 } from "uuid";
+import { addTodo, addTodoGroup, importTodos } from "@/redux/reducers/TodoListReducer";
 
 function EditScreen({ navigation, route }: any) {
 	const dispatch = useDispatch();
@@ -48,24 +49,26 @@ function EditScreen({ navigation, route }: any) {
 						title="Importieren"
 						onPress={async () => {
 							const v = await readFileAsync();
-							v.forEach((todoPart: TodoPart) => {
-								todoPart.id = uuidv4();
-							});
+							dispatch(importTodos(v));
 
-							// dispatch(
-							// 	alterCurrentTodoList({
-							// 		...currentTodoList,
-							// 		todos: [...currentTodoList!.todos, ...v],
-							// 	})
-							// );
 							setMenuVisible(false);
 						}}
 					/>
 					<Menu.Item
 						title="Exportieren"
 						onPress={() => {
+							const res: any[] = [];
+							Object.values(currentTodoList.todos).forEach((part) => {
+								const processedPart = { title: part.title, todos: [] };
+								const processedTodos: any = [];
+								Object.values(part.todos).forEach((todo) => {
+									processedTodos.push({ title: todo.title });
+								});
+								processedPart.todos = processedTodos;
+								res.push(processedPart);
+							});
 							shareFileAsync(
-								JSON.stringify(currentTodoList?.todos),
+								JSON.stringify(res),
 								`Export-${currentTodoList?.listName.toString()} ${getCurrentDateTimeSting()}.json`
 							);
 							setMenuVisible(false);

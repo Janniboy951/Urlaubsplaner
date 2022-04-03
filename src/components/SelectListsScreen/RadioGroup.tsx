@@ -4,7 +4,7 @@ import { removeTodoList, selectTodoList } from "@/redux/reducers/TodoListReducer
 import { RootState } from "@/redux/Store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useCallback, useEffect, useLayoutEffect } from "react";
+import React, { useCallback } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import "react-native-get-random-values";
 import { useDispatch, useSelector } from "react-redux";

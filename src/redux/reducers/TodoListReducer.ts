@@ -1,17 +1,10 @@
 import { objectWithoutKey } from "@/helper/Helper";
-import { PerformantTodoList, TodoList } from "@/Types";
+import { PerformantTodo, PerformantTodoList, PerformantTodoPart, TodoList } from "@/Types";
 // import { ActionTypes } from "@/redux/reducers/TodoListReducer";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 
 type Season = "SUMMER" | "WINTER";
-
-interface TodoListState {
-	season: Season;
-	todoLists: { [key: string]: PerformantTodoList };
-	currentTodoList: PerformantTodoList;
-	currentTodoListName: string;
-}
 
 const emptyTodoList: PerformantTodoList = {
 	listID: "_" + uuidv4(),
@@ -20,6 +13,22 @@ const emptyTodoList: PerformantTodoList = {
 	finishedTodoAmount: 0,
 	todos: {},
 };
+
+const emptyTodoPart: PerformantTodoPart = {
+	id: "_" + uuidv4(),
+	title: "action.payload",
+	todoAmount: 0,
+	checkedAmount: 0,
+	checked: false,
+	todos: {},
+};
+
+interface TodoListState {
+	season: Season;
+	todoLists: { [key: string]: PerformantTodoList };
+	currentTodoList: PerformantTodoList;
+	currentTodoListName: string;
+}
 
 const initialState: TodoListState = {
 	season: "WINTER",
@@ -35,11 +44,9 @@ const currentTodoListSlice = createSlice({
 		createTodoList(state, action: PayloadAction<string>) {
 			const newUUID = uuidv4();
 			state.todoLists[newUUID] = {
+				...emptyTodoList,
 				listID: newUUID,
 				listName: action.payload,
-				totalTodoAmount: 0,
-				finishedTodoAmount: 0,
-				todos: {},
 			};
 		},
 		removeTodoList(state, action: PayloadAction<string>) {
@@ -51,14 +58,13 @@ const currentTodoListSlice = createSlice({
 		},
 		addTodoGroup(state, action: PayloadAction<string>) {
 			const newUUID = uuidv4();
+
 			state.currentTodoList.todos[newUUID] = {
+				...emptyTodoPart,
 				id: newUUID,
 				title: action.payload,
-				todoAmount: 0,
-				checkedAmount: 0,
-				checked: false,
-				todos: {},
 			};
+
 			state.todoLists[state.currentTodoListName] = state.currentTodoList;
 		},
 		removeTodoGroup(state, action: PayloadAction<string>) {
@@ -90,6 +96,39 @@ const currentTodoListSlice = createSlice({
 			state.currentTodoList.totalTodoAmount--;
 			state.todoLists[state.currentTodoListName] = state.currentTodoList;
 		},
+		importTodos(
+			state,
+			action: PayloadAction<
+				{
+					title: string;
+					todos: {
+						title: string;
+					}[];
+				}[]
+			>
+		) {
+			let totalTodosAdded = 0;
+			const processedImport: { [key: string]: PerformantTodoPart } = {};
+			console.log(action.payload, processedImport);
+			action.payload.forEach((part) => {
+				const newPart: PerformantTodoPart = {
+					...emptyTodoPart,
+					id: uuidv4(),
+					title: part.title,
+					todos: {},
+				};
+				part.todos.forEach((todo) => {
+					const newUUID = uuidv4();
+					newPart.todos[newUUID] = { id: newUUID, title: todo.title };
+					newPart.todoAmount++;
+					totalTodosAdded++;
+				});
+				processedImport[newPart.id] = JSON.parse(JSON.stringify(newPart));
+			});
+			state.currentTodoList.todos = { ...state.currentTodoList.todos, ...processedImport };
+			state.currentTodoList.totalTodoAmount += totalTodosAdded;
+			state.todoLists[state.currentTodoListName] = state.currentTodoList;
+		},
 
 		setSeason(state, action) {
 			state.season = action.payload;
@@ -100,6 +139,7 @@ const currentTodoListSlice = createSlice({
 export const {
 	setSeason,
 	addTodo,
+	importTodos,
 	addTodoGroup,
 	createTodoList,
 	removeTodo,
