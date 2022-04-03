@@ -1,4 +1,4 @@
-import { alterCurrentTodoList } from "@/redux/actions/Actions";
+import { alterCurrentTodoList } from "@/redux/reducers/TodoListReducer";
 import { RootState } from "@/redux/Store";
 import React from "react";
 import { Button, Dialog, Portal, TextInput } from "react-native-paper";
@@ -27,7 +27,7 @@ function AddGroup({
 		dispatch(
 			alterCurrentTodoList({
 				...currentTodoList,
-				todos: [...currentTodoList?.todos, newGroup],
+				todos: [...currentTodoList!.todos, newGroup],
 			})
 		);
 

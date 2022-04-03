@@ -1,65 +1,48 @@
-import AccordianList from "@/components/TodosScreen/Accordian";
-import Todo from "@/components/TodosScreen/Todo";
-import { resetFinishedAmount } from "@/redux/actions/Actions";
+import AccordianList from "@/components/TodosScreen/AccordianList";
+import TodoProgressBar from "@/components/TodosScreen/TodoProgressBar";
+import { removeTodoList } from "@/redux/reducers/CheckTodoListReducer";
 import { RootState } from "@/redux/Store";
-import { TodoList } from "@/Types";
 import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import "react-native-get-random-values";
-import { Colors, FAB, ProgressBar } from "react-native-paper";
+import { FAB } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 
-function renderItem({ item, setHeadChecked, data }: any) {
-	return <Todo todo={item} setHeadChecked={setHeadChecked} partData={data} />;
-}
-
 export default function TodosScreen({ navigation }: any) {
-	const {
-		currentTodoList,
-		currentFinishedAmount,
-	}: { currentTodoList: TodoList | undefined; currentFinishedAmount: number } = useSelector(
-		(state: RootState) => state.todoListReducer
+	const listName = useSelector(
+		(state: RootState) => state.checkTodoListReducer.currentList!.listName
 	);
+	const listID = useSelector(
+		(state: RootState) => state.checkTodoListReducer.currentList!.listID
+	);
+	const { finishedTodoAmount, totalTodoAmount } = useSelector(
+		(state: RootState) => state.checkTodoListReducer.currentList!,
+		(l, r) =>
+			(l.finishedTodoAmount == l.totalTodoAmount) ==
+			(r.finishedTodoAmount == r.totalTodoAmount)
+	);
+
 	const dispatch = useDispatch();
 
-	let todoAmount = 0;
-	if (currentTodoList) {
-		currentTodoList.todos.forEach((todoPart) => {
-			todoAmount += todoPart.todos.length;
-		});
-	}
-	if (todoAmount == 0) {
-		todoAmount = -1;
-	}
-
 	useEffect(() => {
-		navigation.setOptions({ title: "Todos: " + currentTodoList?.listName });
-		dispatch(resetFinishedAmount());
+		navigation.setOptions({ title: "Todos: " + listName });
 	}, []);
+	console.log("RENDER TODOSCREEN");
 
 	return (
 		<View style={styles.container}>
-			<View style={{ width: "100%" }}>
-				<ProgressBar
-					progress={currentFinishedAmount / todoAmount}
-					color={true ? Colors.blue800 : Colors.red800}
-					style={{ height: 21, width: undefined }}
-				/>
-			</View>
+			<TodoProgressBar />
 
-			<AccordianList
-				accordianListData={currentTodoList?.todos}
-				setAccordianListData={() => {}} // edited
-				renderItem={renderItem}
-			/>
+			<AccordianList />
 			<FAB
-				visible={currentFinishedAmount == todoAmount}
+				visible={finishedTodoAmount == totalTodoAmount}
 				icon="briefcase-check-outline"
 				style={styles.fab}
 				color="white"
 				onPress={() => {
+					dispatch(removeTodoList(listID));
 					navigation.goBack();
-				}} // edited
+				}}
 			/>
 		</View>
 	);

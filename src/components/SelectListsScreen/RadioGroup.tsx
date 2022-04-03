@@ -1,6 +1,6 @@
 import CreateNewListDialog from "@/dialogs/CreateNewList";
 import DeleteListDialog from "@/dialogs/DeleteList";
-import { setCurrentTodoList } from "@/redux/actions/Actions";
+import { setCurrentTodoList } from "@/redux/reducers/TodoListReducer";
 import { RootState } from "@/redux/Store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";

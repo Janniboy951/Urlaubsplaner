@@ -1,11 +1,23 @@
 import RadioGroup from "@/components/SelectListsScreen/RadioGroup";
 import SeasonSwitch from "@/components/SelectListsScreen/SeasonSwitch";
+import { addTodoList, selectTodoList } from "@/redux/reducers/CheckTodoListReducer";
+import { setCurrentTodoList } from "@/redux/reducers/TodoListReducer";
+import { RootState } from "@/redux/Store";
+import { convertToPerformant } from "@/Types";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import "react-native-gesture-handler";
 import { Button } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function SelectListsScreen({ navigation }: any) {
+	const dispatch = useDispatch();
+	const currentTodoList = useSelector(
+		(state: RootState) => state.todoListReducer.currentTodoList
+	);
+	const editingTodoLists = useSelector(
+		(state: RootState) => state.checkTodoListReducer.todoLists
+	);
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Liste auswählen</Text>
@@ -15,7 +27,15 @@ export default function SelectListsScreen({ navigation }: any) {
 			<Button
 				icon="check"
 				mode="contained"
-				onPress={() => navigation.navigate("Todos")}
+				onPress={() => {
+					if (Object.keys(editingTodoLists).indexOf(currentTodoList!.listID) == -1) {
+						console.log("ADD to Lists");
+						dispatch(addTodoList(convertToPerformant(currentTodoList!)));
+					}
+
+					dispatch(selectTodoList(currentTodoList!.listID));
+					navigation.navigate("Todos");
+				}}
 				style={styles.startButton}
 			>
 				Loslegen

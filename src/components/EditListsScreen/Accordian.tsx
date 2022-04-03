@@ -157,7 +157,9 @@ function AccordianList({
 	isFooterEnabled?: boolean;
 }) {
 	if (setAccordianListData == undefined) {
-		setAccordianListData = () => {};
+		setAccordianListData = (v) => {
+			console.log(v);
+		};
 	}
 
 	const [deleteAlertVisible, setDeleteAlertVisible] = React.useState(false);

@@ -1,51 +1,41 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import TakePhotoButton from "./TakePhotoButton";
-import { getCurrentDateTimeSting } from "@/helper/Date";
-import { useDispatch } from "react-redux";
-import { changeFinishedAmount } from "@/redux/actions/Actions";
-import { Todo as TodoType } from "@/Types";
+import { useDispatch, useSelector } from "react-redux";
+import { checkTodo } from "@/redux/reducers/CheckTodoListReducer";
+import { RootState } from "@/redux/Store";
 
 export default React.memo(Todo);
 
-function Todo({
-	todo,
-	setHeadChecked,
-	partData,
-}: {
-	todo: TodoType;
-	setHeadChecked: any;
-	partData: any;
-}) {
-	const [finished, setFinsihed] = React.useState(todo.finished);
+function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function Todo({ todoID, partID }: { todoID: string; partID: string }) {
 	const dispatch = useDispatch();
+	const thisTodo = useSelector(
+		(state: RootState) => state.checkTodoListReducer.currentList!.todos[partID].todos[todoID]
+	);
+	const [checked, setChecked] = React.useState(thisTodo.finished || false);
 
-	function toggleCheck() {
-		todo.finished = !todo.finished;
-		todo.finishedAt = getCurrentDateTimeSting();
-		setFinsihed(todo.finished);
-		setHeadChecked(
-			partData.filter((todo: any) => todo.finished === true).length == partData.length
-		);
-		// console.log(partData.filter((todo: any) => todo.finished === true).length, partData.length);
-
-		dispatch(changeFinishedAmount(todo.finished ? 1 : -1));
+	async function toggleCheck() {
+		setChecked(!checked);
+		await sleep(0); // Somehow its getting faster
+		dispatch(checkTodo({ partID, todoID }));
 	}
-	useEffect(() => setFinsihed(todo.finished), []);
-	// console.log(todo, partData);
-	console.log("Load TODO");
+	console.log("load todo");
 	return (
 		<View style={{ width: "100%" }}>
 			<TouchableOpacity style={styles.row} onPress={toggleCheck}>
 				<View style={{ flexDirection: "row" }}>
 					<MaterialCommunityIcons
-						name={finished ? "check-box-outline" : "checkbox-blank-outline"}
+						name={checked ? "check-box-outline" : "checkbox-blank-outline"}
 						size={30}
 					/>
-					<Text style={styles.title}>{todo.title}</Text>
+					<Text style={styles.title}>{thisTodo.title}</Text>
 				</View>
-				<TakePhotoButton color={todo.pictureNeeded ? "red" : "black"} />
+				<TakePhotoButton color={thisTodo.pictureNeeded ? "red" : "black"} />
 			</TouchableOpacity>
 		</View>
 	);

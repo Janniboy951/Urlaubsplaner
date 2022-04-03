@@ -1,4 +1,4 @@
-import { addTodoList } from "@/redux/actions/Actions";
+import { addTodoList } from "@/redux/reducers/TodoListReducer";
 import React, { memo } from "react";
 import { Button, Dialog, Portal, TextInput } from "react-native-paper";
 import { useDispatch } from "react-redux";

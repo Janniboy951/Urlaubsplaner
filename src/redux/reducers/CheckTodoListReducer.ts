@@ -1,9 +1,11 @@
 import { getCurrentDateTimeSting } from "@/helper/Date";
 import { PerformantTodoList } from "@/Types";
-import { createSlice } from "@reduxjs/toolkit/dist/createSlice";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 interface CurrentTodoListState {
-	currentList: string;
+	currentListName: string;
+	currentList?: PerformantTodoList;
 	todoLists: { [key: string]: PerformantTodoList };
 }
 
@@ -14,7 +16,8 @@ const objectWithoutKey = (object: any, key: string) => {
 
 // Define the initial state using that type
 const initialState: CurrentTodoListState = {
-	currentList: "",
+	currentListName: "",
+	currentList: undefined,
 	todoLists: {},
 };
 
@@ -22,26 +25,35 @@ const CurrentTodoListSlice = createSlice({
 	name: "checkTodoList",
 	initialState: initialState,
 	reducers: {
-		addTodoList(state, action) {
-			state.todoLists[action.payload.id] = action.payload;
+		addTodoList(state, action: PayloadAction<PerformantTodoList>) {
+			state.todoLists[action.payload.listID] = action.payload;
 		},
-		removeTodoList(state, action) {
+		removeTodoList(state, action: PayloadAction<string>) {
 			state.todoLists = objectWithoutKey(state.todoLists, action.payload);
 		},
-		selectTodoList(state, action) {
-			state.currentList = action.payload;
+		selectTodoList(state, action: PayloadAction<string>) {
+			state.currentListName = action.payload;
+			state.currentList = state.todoLists[action.payload];
 		},
-		checkTodo(state, action) {
-			const { partID, listID } = action.payload;
-			if (state.todoLists[state.currentList].todos[partID].todos[listID].finished) {
-				state.todoLists[state.currentList].todos[partID].todos[listID].finished = false;
-				state.todoLists[state.currentList].todos[partID].todos[listID].finishedAt =
-					undefined;
+		checkTodo(state, action: PayloadAction<{ partID: string; todoID: string }>) {
+			const { partID, todoID } = action.payload;
+			const currentTodo = state.currentList!.todos[partID].todos[todoID];
+			if (currentTodo.finished) {
+				currentTodo.finished = false;
+				currentTodo.finishedAt = undefined;
+				state.currentList!.todos[partID].checkedAmount--;
+				state.currentList!.finishedTodoAmount--;
 			} else {
-				state.todoLists[state.currentList].todos[partID].todos[listID].finished = true;
-				state.todoLists[state.currentList].todos[partID].todos[listID].finishedAt =
-					getCurrentDateTimeSting();
+				currentTodo.finished = true;
+				currentTodo.finishedAt = getCurrentDateTimeSting();
+				state.currentList!.todos[partID].checkedAmount++;
+				state.currentList!.finishedTodoAmount++;
 			}
+
+			state.currentList!.todos[partID].checked =
+				state.currentList!.todos[partID].checkedAmount ==
+				state.currentList!.todos[partID].todoAmount;
+			state.todoLists[state.currentListName] = state.currentList!;
 		},
 	},
 });

@@ -2,7 +2,7 @@ import EditTodo from "@/components/EditListsScreen/EditTodo";
 import Accordian from "@/components/EditListsScreen/Accordian";
 import { getCurrentDateTimeSting } from "@/helper/Date";
 import { readFileAsync, shareFileAsync } from "@/helper/FileManager";
-import { alterCurrentTodoList, saveCurrentTodoList } from "@/redux/actions/Actions";
+import { alterCurrentTodoList, saveCurrentTodoList } from "@/redux/reducers/TodoListReducer";
 import { RootState } from "@/redux/Store";
 import React, { useEffect } from "react";
 import { Text, View, StyleSheet } from "react-native";
@@ -16,7 +16,9 @@ function EditScreen({ navigation, route }: any) {
 
 	const dispatch = useDispatch();
 
-	const { currentTodoList } = useSelector((state: RootState) => state.todoListReducer);
+	const currentTodoList = useSelector(
+		(state: RootState) => state.todoListReducer.currentTodoList
+	);
 
 	function WindowHeader({ listName, goBack }: { listName: string; goBack: any }) {
 		const [menuVisible, setMenuVisible] = React.useState(false);
@@ -34,7 +36,7 @@ function EditScreen({ navigation, route }: any) {
 		return (
 			<Appbar.Header style={{ backgroundColor: "#fff" }}>
 				<Appbar.BackAction onPress={goBack} />
-				<Appbar.Content title="Liste bearbeiten" subtitle={currentTodoList.listName} />
+				<Appbar.Content title="Liste bearbeiten" subtitle={currentTodoList?.listName} />
 				<Appbar.Action
 					icon="content-save"
 					onPress={() => {
@@ -63,7 +65,7 @@ function EditScreen({ navigation, route }: any) {
 							dispatch(
 								alterCurrentTodoList({
 									...currentTodoList,
-									todos: [...currentTodoList.todos, ...v],
+									todos: [...currentTodoList!.todos, ...v],
 								})
 							);
 							setMenuVisible(false);
@@ -73,8 +75,8 @@ function EditScreen({ navigation, route }: any) {
 						title="Exportieren"
 						onPress={() => {
 							shareFileAsync(
-								JSON.stringify(currentTodoList.todos),
-								`Export-${currentTodoList.listName.toString()} ${getCurrentDateTimeSting()}.json`
+								JSON.stringify(currentTodoList?.todos),
+								`Export-${currentTodoList?.listName.toString()} ${getCurrentDateTimeSting()}.json`
 							);
 							setMenuVisible(false);
 						}}
@@ -89,7 +91,7 @@ function EditScreen({ navigation, route }: any) {
 			headerShown: false,
 			title: `Bearbeiten: ${currentTodoList?.listName}`,
 		});
-		setListData(currentTodoList!.todoParts);
+		setListData(currentTodoList!.todos);
 	}, []);
 
 	function renderItem({ item, setHeadChecked, data, setAccordianData }: any) {
@@ -100,9 +102,10 @@ function EditScreen({ navigation, route }: any) {
 			<WindowHeader listName="Test" goBack={navigation.goBack} />
 			<View style={styles.container}>
 				<Accordian
-					accordianListData={currentTodoList.todos}
+					accordianListData={currentTodoList!.todos}
 					renderItem={renderItem}
 					isFooterEnabled={true}
+					setAccordianListData={(v) => setListData(v)}
 				/>
 			</View>
 		</>

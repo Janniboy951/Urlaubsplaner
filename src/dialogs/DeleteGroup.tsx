@@ -1,13 +1,9 @@
-import { alterCurrentTodoList, deleteTodoList } from "@/redux/actions/Actions";
+import { alterCurrentTodoList } from "@/redux/reducers/TodoListReducer";
 import { RootState } from "@/redux/Store";
 import React from "react";
 import { Button, Dialog, Paragraph, Portal } from "react-native-paper";
-// import Button from "react-native-paper/lib/typescript/components/Button";
-// import Dialog from "react-native-paper/lib/typescript/components/Dialog/Dialog";
-// import Portal from "react-native-paper/lib/typescript/components/Portal/Portal";
-// import Paragraph from "react-native-paper/lib/typescript/components/Typography/Paragraph";
+
 import { useDispatch, useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
 
 function DeleteGroup({
 	visible,
@@ -19,13 +15,15 @@ function DeleteGroup({
 	id: string;
 }) {
 	const dispatch = useDispatch();
-	const { currentTodoList } = useSelector((state: RootState) => state.todoListReducer);
+	const currentTodoList = useSelector(
+		(state: RootState) => state.todoListReducer.currentTodoList
+	);
 
 	function deleteGroup() {
 		onDismiss();
 
-		const pos = currentTodoList.todos.findIndex((v: any) => v.id == id);
-		const newTodos: any = currentTodoList.todos.slice(0);
+		const pos = currentTodoList!.todos.findIndex((v: any) => v.id == id);
+		const newTodos: any = currentTodoList!.todos.slice(0);
 		newTodos.splice(pos, 1);
 		dispatch(alterCurrentTodoList({ ...currentTodoList, todos: newTodos }));
 	}

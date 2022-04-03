@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 export default function AddTodo({ setData, data }: any) {
 	const [alertVisible, setAlertVisible] = React.useState(false);
 	const [newElementName, setNewElementName] = React.useState("");
+
 	const submitAlert = () => {
 		setAlertVisible(false);
 		let newTodo = {
@@ -16,7 +17,8 @@ export default function AddTodo({ setData, data }: any) {
 			title: newElementName,
 		};
 		setData((prevValue: any) => [...prevValue, newTodo]);
-		data.push(newTodo);
+
+		// data.push(newTodo);
 		setNewElementName("");
 	}; // setData((prevValue: any) => [...prevValue, newGroup]);
 	// data.push(newGroup);
