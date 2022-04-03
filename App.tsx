@@ -31,7 +31,7 @@ export default function App() {
 								<Stack.Screen
 									name="Todos"
 									component={TodoScreen}
-									options={{ headerShown: true, headerBackVisible: false }}
+									options={{ headerShown: true }}
 								/>
 								<Stack.Screen
 									name="EditList"

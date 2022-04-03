@@ -1,18 +1,13 @@
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
-
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import Todo from "@/components/TodosScreen/Todo";
 import AccordianList from "@/components/TodosScreen/Accordian";
-import "react-native-get-random-values";
-import { v4 as uuidv4 } from "uuid";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Colors, FAB, ProgressBar } from "react-native-paper";
-import { test } from "@/ExampleData";
-
-import { useDispatch, useSelector } from "react-redux";
+import Todo from "@/components/TodosScreen/Todo";
+import { resetFinishedAmount } from "@/redux/Actions";
 import { RootState } from "@/redux/Store";
 import { TodoList } from "@/Types";
-import { changeFinishedAmount, resetFinishedAmount } from "@/redux/Actions";
+import React, { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
+import "react-native-get-random-values";
+import { Colors, FAB, ProgressBar } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
 
 function renderItem({ item, setHeadChecked, data }: any) {
 	return <Todo todo={item} setHeadChecked={setHeadChecked} partData={data} />;
