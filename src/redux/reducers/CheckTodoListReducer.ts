@@ -22,7 +22,26 @@ const CurrentTodoListSlice = createSlice({
 	initialState: initialState,
 	reducers: {
 		addTodoList(state, action: PayloadAction<PerformantTodoList>) {
-			state.todoLists[action.payload.listID] = action.payload;
+			if (!(action.payload.listID in state.todoLists)) {
+				state.todoLists[action.payload.listID] = action.payload;
+			} else {
+				Object.values(action.payload.todos).forEach((part) => {
+					if (!(part.id in state.todoLists[action.payload.listID])) {
+						state.todoLists[action.payload.listID].todos[part.id] = part;
+						state.todoLists[action.payload.listID].totalTodoAmount += part.todoAmount;
+					} else {
+						Object.values(part.todos).forEach((todo) => {
+							if (
+								!(todo.id in state.todoLists[action.payload.listID].todos[part.id])
+							) {
+								state.todoLists[action.payload.listID].todos[part.id].todos[
+									todo.id
+								] = todo;
+							}
+						});
+					}
+				});
+			}
 		},
 		removeTodoList(state, action: PayloadAction<string>) {
 			state.todoLists = objectWithoutKey(state.todoLists, action.payload);

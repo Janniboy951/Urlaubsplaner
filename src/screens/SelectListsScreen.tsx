@@ -27,10 +27,10 @@ export default function SelectListsScreen({ navigation }: any) {
 				icon="check"
 				mode="contained"
 				onPress={() => {
-					if (Object.keys(editingTodoLists).indexOf(currentTodoList!.listID) == -1) {
-						console.log("ADD to Lists");
-						dispatch(addTodoList(currentTodoList));
-					}
+					// if (Object.keys(editingTodoLists).indexOf(currentTodoList!.listID) == -1) {
+					// 	console.log("ADD to Lists");
+					dispatch(addTodoList(currentTodoList));
+					// }
 
 					dispatch(selectTodoList(currentTodoList!.listID));
 					navigation.navigate("Todos");
