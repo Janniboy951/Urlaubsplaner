@@ -1,6 +1,6 @@
 import AccordianList from "@/components/TodosScreen/Accordian";
 import Todo from "@/components/TodosScreen/Todo";
-import { resetFinishedAmount } from "@/redux/Actions";
+import { resetFinishedAmount } from "@/redux/actions/Actions";
 import { RootState } from "@/redux/Store";
 import { TodoList } from "@/Types";
 import React, { useEffect } from "react";

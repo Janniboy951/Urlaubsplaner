@@ -1,4 +1,4 @@
-import { alterCurrentTodoList } from "@/redux/Actions";
+import { alterCurrentTodoList } from "@/redux/actions/Actions";
 import { RootState } from "@/redux/Store";
 import React from "react";
 import { Button, Dialog, Portal, TextInput } from "react-native-paper";

@@ -1,4 +1,4 @@
-import { persistor, Store } from "@/redux/Store";
+import { persistor, store } from "@/redux/Store";
 import EditScreen from "@/screens/EditScreen";
 import SelectListsScreen from "@/screens/SelectListsScreen";
 import TodoScreen from "@/screens/TodoScreen";
@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
 	return (
-		<ReactReduxProvider store={Store}>
+		<ReactReduxProvider store={store}>
 			<PersistGate loading={null} persistor={persistor}>
 				<ReactNativePaperProvider>
 					<StatusBar />

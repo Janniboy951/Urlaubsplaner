@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { memo } from "react";
 import { StyleProp, TextStyle, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { setSeason } from "@/redux/Actions";
+import { setSeason } from "@/redux/actions/Actions";
 import { RootState } from "@/redux/Store";
 
 export default memo(SeasonSwitch);

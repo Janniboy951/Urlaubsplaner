@@ -1,5 +1,5 @@
 import { TodoList } from "@/Types";
-import { ActionTypes } from "./Actions";
+import { ActionTypes } from "@/redux/actions/Actions";
 
 type Season = "SUMMER" | "WINTER";
 

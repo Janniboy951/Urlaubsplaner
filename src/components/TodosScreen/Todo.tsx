@@ -4,7 +4,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import TakePhotoButton from "./TakePhotoButton";
 import { getCurrentDateTimeSting } from "@/helper/Date";
 import { useDispatch } from "react-redux";
-import { changeFinishedAmount } from "@/redux/Actions";
+import { changeFinishedAmount } from "@/redux/actions/Actions";
 import { Todo as TodoType } from "@/Types";
 
 export default React.memo(Todo);
