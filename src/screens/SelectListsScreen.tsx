@@ -1,7 +1,6 @@
 import RadioGroup from "@/components/SelectListsScreen/RadioGroup";
 import SeasonSwitch from "@/components/SelectListsScreen/SeasonSwitch";
 import { addTodoList, selectTodoList } from "@/redux/reducers/CheckTodoListReducer";
-import { setCurrentTodoList } from "@/redux/reducers/TodoListReducer";
 import { RootState } from "@/redux/Store";
 import { convertToPerformant } from "@/Types";
 import React from "react";
@@ -30,7 +29,7 @@ export default function SelectListsScreen({ navigation }: any) {
 				onPress={() => {
 					if (Object.keys(editingTodoLists).indexOf(currentTodoList!.listID) == -1) {
 						console.log("ADD to Lists");
-						dispatch(addTodoList(convertToPerformant(currentTodoList!)));
+						dispatch(addTodoList(currentTodoList));
 					}
 
 					dispatch(selectTodoList(currentTodoList!.listID));

@@ -1,28 +1,19 @@
 import DeleteGroupDialog from "@/dialogs/DeleteGroup";
+import { RootState } from "@/redux/Store";
+import { PerformantTodo, PerformantTodoPart } from "@/Types";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import _ from "lodash";
 import React, { Dispatch, memo, SetStateAction } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import AddElement from "../EditListsScreen/AddElement";
 import AddNewGroup from "../EditListsScreen/AddGroup";
-
-// type declaration
-type AccordianData = {
-	id: string;
-	title: string;
-	todos: AccordianElemenetData[];
-	[key: string]: any;
-};
-type AccordianElemenetData = {
-	id: string;
-	title: string;
-	[key: string]: any;
-};
+import EditTodo from "./EditTodo";
 
 //#region private functions
 
-function _keyExtractor(item: { id: string }, index: number): string {
-	return item.id;
+function _keyExtractor(item: string, index: number): string {
+	return item;
 }
 //#endregion
 
@@ -41,19 +32,20 @@ function PartCheckBox({ checked }: { checked: boolean }): JSX.Element {
 
 function AccordianHead({
 	expanded,
-	title,
-	checked,
+	id,
 	onDelete,
 }: {
 	expanded: boolean;
-	title: string;
-	checked: boolean;
+	id: string;
 	onDelete: () => void;
 }) {
+	const title = useSelector(
+		(state: RootState) => state.todoListReducer.currentTodoList.todos[id].title
+	);
 	return (
 		<>
 			<View style={{ flexDirection: "row" }}>
-				<PartCheckBox checked={checked} />
+				<PartCheckBox checked={false} />
 				<Text style={styles.title}>{title}</Text>
 			</View>
 			<View style={{ flexDirection: "row" }}>
@@ -72,61 +64,42 @@ function AccordianHead({
 }
 
 function Accordian({
-	title,
-	data,
-	footerEnabled,
-	accordianRenderItem,
+	id,
 	onDelete,
 }: {
-	title: string;
-	data: AccordianElemenetData[];
-	footerEnabled: boolean;
-	accordianRenderItem: any;
+	id: string;
+
 	onDelete: () => void;
 }) {
 	const [expanded, setExpanded] = React.useState(false);
-	const [headChecked, setHeadChecked] = React.useState(
-		data.filter((todo: any) => todo.finished === true).length == data.length
+
+	const newTodos = useSelector(
+		(state: RootState) => Object.values(state.todoListReducer.currentTodoList.todos[id].todos),
+		(l, r) => _.isEqual(l, r)
 	);
-	const [accordianData, setAccordianData] = React.useState(data);
 
-	React.useEffect(() => {
-		setAccordianData(data);
-	}, []);
-
-	function _accordian_renderItem({ item }: { item: any }) {
-		return accordianRenderItem({
-			item,
-			setHeadChecked,
-			data,
-			setAccordianData,
-		});
+	console.log(newTodos, "asd");
+	function renderItem({ item }: { item: PerformantTodo }) {
+		return <EditTodo todoID={item.id} partID={id} />;
 	}
 
 	return (
 		<View style={{ width: "100%" }}>
 			<TouchableOpacity style={styles.row} onPress={() => setExpanded(!expanded)}>
-				<AccordianHead
-					expanded={expanded}
-					checked={headChecked}
-					title={title}
-					onDelete={onDelete}
-				/>
+				<AccordianHead expanded={expanded} id={id} onDelete={onDelete} />
 			</TouchableOpacity>
 			<View style={styles.parentHr} />
 			{expanded && (
 				<FlatList
 					style={{ width: "100%" }}
-					data={accordianData}
-					renderItem={_accordian_renderItem}
-					keyExtractor={_keyExtractor}
+					data={newTodos}
+					renderItem={renderItem}
+					keyExtractor={_listKeyExtractor}
 					initialNumToRender={10}
 					removeClippedSubviews={true}
 					updateCellsBatchingPeriod={55}
 					windowSize={7}
-					ListFooterComponent={
-						footerEnabled ? <AddElement setData={setAccordianData} data={data} /> : null
-					}
+					ListFooterComponent={<AddElement partID={id} />}
 				/>
 			)}
 		</View>
@@ -134,33 +107,32 @@ function Accordian({
 }
 
 // TODO Optimizable
-const MemorizedAccordian = React.memo(Accordian, (prevProps, nextProps) => {
-	const dataEqual = prevProps.data === nextProps.data;
-	const titleEqual = prevProps.title === nextProps.title;
-	const accordianRenderItemEqual =
-		prevProps.accordianRenderItem === nextProps.accordianRenderItem;
-	const footerEnabledEqual = prevProps.footerEnabled === nextProps.footerEnabled;
-	return dataEqual && titleEqual && accordianRenderItemEqual && footerEnabledEqual;
-});
+const MemorizedAccordian = React.memo(Accordian);
 
 export default memo(AccordianList);
 
+function _listKeyExtractor(item: { id: string }, index: number): string {
+	return item.id;
+}
+
 function AccordianList({
-	accordianListData,
 	setAccordianListData,
-	renderItem,
-	isFooterEnabled,
 }: {
-	accordianListData: any;
 	setAccordianListData?: Dispatch<SetStateAction<any>>;
-	renderItem: any;
-	isFooterEnabled?: boolean;
 }) {
 	if (setAccordianListData == undefined) {
 		setAccordianListData = (v) => {
 			console.log(v);
 		};
 	}
+	const currentTodoList = useSelector(
+		(state: RootState) => Object.values(state.todoListReducer.currentTodoList.todos),
+		(l, r) =>
+			_.isEqual(
+				l.map((v) => v.id),
+				r.map((v) => v.id)
+			)
+	);
 
 	const [deleteAlertVisible, setDeleteAlertVisible] = React.useState(false);
 	const [deleteID, setDeleteID] = React.useState("");
@@ -171,25 +143,17 @@ function AccordianList({
 	}
 
 	// console.log("Load ACCORDIANLIST");
-	function _renderAccordianListItem({ item }: { item: AccordianData }): JSX.Element {
-		return (
-			<MemorizedAccordian
-				onDelete={() => deletePart(item.id)}
-				title={item.title}
-				data={item.todos}
-				footerEnabled={isFooterEnabled == true}
-				accordianRenderItem={renderItem}
-			/>
-		);
+	function _renderAccordianListItem({ item }: { item: PerformantTodoPart }): JSX.Element {
+		return <MemorizedAccordian onDelete={() => deletePart(item.id)} id={item.id} />;
 	}
 	return (
 		<View style={{ width: "100%" }}>
 			<FlatList
 				style={{ width: "100%", height: "100%" }}
-				data={accordianListData}
+				data={currentTodoList}
 				renderItem={_renderAccordianListItem}
-				keyExtractor={_keyExtractor}
-				ListFooterComponent={isFooterEnabled ? <AddNewGroup /> : null}
+				keyExtractor={_listKeyExtractor}
+				ListFooterComponent={<AddNewGroup />}
 			></FlatList>
 			<DeleteGroupDialog
 				visible={deleteAlertVisible}

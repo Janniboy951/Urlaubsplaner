@@ -1,28 +1,15 @@
-import React, { memo } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { PerformantTodoList, PerformantTodoPart } from "@/Types";
-import Accordian from "./Accordian";
-import _ from "lodash";
-import { useSelector } from "react-redux";
 import { RootState } from "@/redux/Store";
+import { PerformantTodoPart } from "@/Types";
+import _ from "lodash";
+import React, { memo } from "react";
+import { FlatList, View } from "react-native";
+import { useSelector } from "react-redux";
+import Accordian from "./Accordian";
 
 //#region private functions
 
 function _keyExtractor(item: { id: string }, index: number): string {
 	return item.id;
-}
-function isEqual(
-	prev: Readonly<{
-		accordianListData: PerformantTodoList;
-	}>,
-	next: Readonly<{
-		accordianListData: PerformantTodoList;
-	}>
-): boolean {
-	return _.isEqual(
-		Object.values(prev.accordianListData.todos).map((v) => v.id),
-		Object.values(next.accordianListData.todos).map((v) => v.id)
-	);
 }
 
 //#endregion
@@ -56,30 +43,3 @@ function AccordianList() {
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	title: {
-		fontSize: 18,
-		fontWeight: "bold",
-		color: "#000",
-		marginLeft: 10,
-	},
-	row: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		height: 56,
-		paddingLeft: 20,
-		paddingRight: 18,
-		alignItems: "center",
-		backgroundColor: "#fff",
-	},
-	parentHr: {
-		height: 1,
-		color: "#ffffff",
-		width: "100%",
-	},
-	child: {
-		backgroundColor: "#999999",
-		padding: 0,
-	},
-});

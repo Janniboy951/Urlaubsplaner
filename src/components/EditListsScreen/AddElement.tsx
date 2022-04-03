@@ -4,21 +4,17 @@ import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Button, Dialog, Portal, TextInput } from "react-native-paper";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
+import { useDispatch } from "react-redux";
+import { addTodo } from "@/redux/reducers/TodoListReducer";
 
-export default function AddTodo({ setData, data }: any) {
+export default function AddTodo({ partID }: { partID: string }) {
 	const [alertVisible, setAlertVisible] = React.useState(false);
 	const [newElementName, setNewElementName] = React.useState("");
+	const dispatch = useDispatch();
 
 	const submitAlert = () => {
 		setAlertVisible(false);
-		let newTodo = {
-			id: uuidv4(),
-			finished: false,
-			title: newElementName,
-		};
-		setData((prevValue: any) => [...prevValue, newTodo]);
-
-		// data.push(newTodo);
+		dispatch(addTodo({ name: newElementName, partID: partID }));
 		setNewElementName("");
 	}; // setData((prevValue: any) => [...prevValue, newGroup]);
 	// data.push(newGroup);

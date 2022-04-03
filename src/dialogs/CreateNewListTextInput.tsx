@@ -1,9 +1,7 @@
-import { addTodoList } from "@/redux/reducers/TodoListReducer";
-import { TodoList } from "@/Types";
+import { createTodoList } from "@/redux/reducers/TodoListReducer";
 import React, { forwardRef, useImperativeHandle } from "react";
 import { TextInput } from "react-native-paper";
 import { useDispatch } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
 
 function CreateNewListTextInput(props: any, ref: any) {
 	const [newListName, setNewListName] = React.useState("");
@@ -14,10 +12,7 @@ function CreateNewListTextInput(props: any, ref: any) {
 		ref,
 		() => ({
 			createNewList: () => {
-				console.log(newListName, "asd");
-				dispatch(
-					addTodoList({ listID: uuidv4(), listName: newListName, todos: [] } as TodoList)
-				);
+				dispatch(createTodoList(newListName));
 				setNewListName("");
 			},
 		}),

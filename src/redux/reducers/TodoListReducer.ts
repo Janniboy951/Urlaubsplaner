@@ -1,131 +1,111 @@
-import { TodoList } from "@/Types";
+import { objectWithoutKey } from "@/helper/Helper";
+import { PerformantTodoList, TodoList } from "@/Types";
 // import { ActionTypes } from "@/redux/reducers/TodoListReducer";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { v4 as uuidv4 } from "uuid";
 
 type Season = "SUMMER" | "WINTER";
 
 interface TodoListState {
-	todoLists: TodoList[];
 	season: Season;
-	currentTodoList: TodoList | undefined;
-	currentFinishedAmount: number;
+	todoLists: { [key: string]: PerformantTodoList };
+	currentTodoList: PerformantTodoList;
+	currentTodoListName: string;
 }
 
+const emptyTodoList: PerformantTodoList = {
+	listID: "_" + uuidv4(),
+	listName: "",
+	totalTodoAmount: 0,
+	finishedTodoAmount: 0,
+	todos: {},
+};
+
 const initialState: TodoListState = {
-	todoLists: [],
 	season: "WINTER",
-	currentTodoList: undefined,
-	currentFinishedAmount: 0,
+	todoLists: {},
+	currentTodoList: emptyTodoList,
+	currentTodoListName: "",
 };
 
 const currentTodoListSlice = createSlice({
 	name: "todoList",
 	initialState: initialState,
 	reducers: {
-		setCurrentTodoList(state, action) {
-			const newTodoList = state.todoLists.filter((v: any) => v.listID == action.payload)[0];
-			state.currentTodoList = JSON.parse(JSON.stringify(newTodoList));
+		createTodoList(state, action: PayloadAction<string>) {
+			const newUUID = uuidv4();
+			state.todoLists[newUUID] = {
+				listID: newUUID,
+				listName: action.payload,
+				totalTodoAmount: 0,
+				finishedTodoAmount: 0,
+				todos: {},
+			};
 		},
-		alterCurrentTodoList(state, action) {
-			state.currentTodoList = JSON.parse(JSON.stringify(action.payload));
+		removeTodoList(state, action: PayloadAction<string>) {
+			state.todoLists = objectWithoutKey(state.todoLists, action.payload);
 		},
+		selectTodoList(state, action: PayloadAction<string>) {
+			state.currentTodoListName = action.payload;
+			state.currentTodoList = state.todoLists[action.payload];
+		},
+		addTodoGroup(state, action: PayloadAction<string>) {
+			const newUUID = uuidv4();
+			state.currentTodoList.todos[newUUID] = {
+				id: newUUID,
+				title: action.payload,
+				todoAmount: 0,
+				checkedAmount: 0,
+				checked: false,
+				todos: {},
+			};
+			state.todoLists[state.currentTodoListName] = state.currentTodoList;
+		},
+		removeTodoGroup(state, action: PayloadAction<string>) {
+			state.currentTodoList.totalTodoAmount -=
+				state.currentTodoList.todos[action.payload].todoAmount;
+			state.currentTodoList.todos = objectWithoutKey(
+				state.currentTodoList.todos,
+				action.payload
+			);
+			state.todoLists[state.currentTodoListName] = state.currentTodoList;
+		},
+		addTodo(state, action: PayloadAction<{ name: string; partID: string }>) {
+			const newUUID = uuidv4();
+			state.currentTodoList.todos[action.payload.partID].todos[newUUID] = {
+				id: newUUID,
+				title: action.payload.name,
+			};
+			state.currentTodoList.todos[action.payload.partID].todoAmount++;
+			state.currentTodoList.totalTodoAmount++;
+			console.log(state.currentTodoList);
+			state.todoLists[state.currentTodoListName] = state.currentTodoList;
+		},
+		removeTodo(state, action: PayloadAction<{ partID: string; todoID: string }>) {
+			state.currentTodoList.todos[action.payload.partID].todos = objectWithoutKey(
+				state.currentTodoList.todos[action.payload.partID].todos,
+				action.payload.todoID
+			);
+			state.currentTodoList.todos[action.payload.partID].todoAmount--;
+			state.currentTodoList.totalTodoAmount--;
+			state.todoLists[state.currentTodoListName] = state.currentTodoList;
+		},
+
 		setSeason(state, action) {
 			state.season = action.payload;
-		},
-		addTodoList(state, action) {
-			state.todoLists.push(action.payload);
-		},
-		changeFinishedAmount(state, action) {
-			state.currentFinishedAmount += action.payload;
-		},
-		resetFinishedAmount(state) {
-			state.currentFinishedAmount = 0;
-		},
-		deleteTodoList(state, action) {
-			const pos = state.todoLists.findIndex((v: any) => v.listID == action.payload);
-			state.todoLists.splice(pos, 1);
-		},
-		saveCurrentTodoList(state, action) {
-			const pos = state.todoLists.findIndex((v: any) => v.listID == action.payload.listID);
-			state.todoLists.splice(pos, 1, action.payload);
 		},
 	},
 });
 
-/* function todoListReducer(state = initialState, action: { type: any; payload: any }) {
-	switch (action.type) {
-		case ActionTypes.SET_CURRENT_TODOLIST:
-			const newTodoList = state.todoLists.filter((v: any) => v.listID == action.payload)[0];
-			return {
-				...state,
-				currentTodoList: JSON.parse(JSON.stringify(newTodoList)),
-			};
-		case ActionTypes.ALTER_CURRENT_TODOLIST:
-			return {
-				...state,
-				currentTodoList: JSON.parse(JSON.stringify(action.payload)),
-			};
-		case ActionTypes.SAVE_CURRENT_TODOLIST:
-			// console.log({ ...state, todoLists: [ ...state.todoLists, [0]: action.payload ] });
-			let pos = state.todoLists.findIndex((v: any) => v.listID == action.payload.listID);
-			// state.todoLists[pos]=action.payload
-			// let newTodoLists: any = [...state.todoLists];
-			// newTodoLists.splice(pos, 1, action.payload);
-			console.log({
-				...state,
-				todoLists: [
-					...state.todoLists.slice(0, pos),
-					action.payload,
-					...state.todoLists.slice(pos + 1),
-				],
-			});
-			return {
-				...state,
-				todoLists: [
-					...state.todoLists.slice(0, pos),
-					action.payload,
-					...state.todoLists.slice(pos + 1),
-				],
-			};
-
-		case ActionTypes.SET_SEASON:
-			return { ...state, season: action.payload };
-
-		case ActionTypes.ADD_TODOLIST:
-			return { ...state, todoLists: [...state.todoLists, action.payload] };
-		case ActionTypes.CHANGE_FINISHED_AMOUNT: {
-			return {
-				...state,
-				currentFinishedAmount: state.currentFinishedAmount + action.payload,
-			};
-		}
-		case ActionTypes.RESET_FINISHED_AMOUNT:
-			return {
-				...state,
-				currentFinishedAmount: 0,
-			};
-		case ActionTypes.DELETE_TODOLIST:
-			pos = state.todoLists.findIndex((v: any) => v.listID == action.payload);
-			let newTodoLists = state.todoLists.slice(0);
-			newTodoLists.splice(pos, 1);
-			return {
-				...state,
-				todoLists: newTodoLists,
-			};
-		default:
-			return state;
-	}
-}*/
-
 export const {
-	addTodoList,
-	alterCurrentTodoList,
-	changeFinishedAmount,
-	deleteTodoList,
-	resetFinishedAmount,
-	saveCurrentTodoList,
-	setCurrentTodoList,
 	setSeason,
+	addTodo,
+	addTodoGroup,
+	createTodoList,
+	removeTodo,
+	removeTodoGroup,
+	removeTodoList,
+	selectTodoList,
 } = currentTodoListSlice.actions;
 
 export default currentTodoListSlice.reducer;

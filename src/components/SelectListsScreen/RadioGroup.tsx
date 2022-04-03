@@ -1,6 +1,6 @@
 import CreateNewListDialog from "@/dialogs/CreateNewList";
 import DeleteListDialog from "@/dialogs/DeleteList";
-import { setCurrentTodoList } from "@/redux/reducers/TodoListReducer";
+import { removeTodoList, selectTodoList } from "@/redux/reducers/TodoListReducer";
 import { RootState } from "@/redux/Store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -22,6 +22,7 @@ function RadioItem({
 	onEdit: (id: string) => void;
 	onDelete: (id: string) => void;
 }) {
+	const dispatch = useDispatch();
 	console.log("rerender", "RadioItem");
 	return (
 		<TouchableOpacity style={styles.radioButtonOpacity} onPress={() => onSelect(item.listID)}>
@@ -41,7 +42,7 @@ function RadioItem({
 						style={styles.radioButtonEdit}
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={() => onDelete(item.listID)}>
+				<TouchableOpacity onPress={() => dispatch(removeTodoList(item.listID))}>
 					<MaterialCommunityIcons
 						name="delete"
 						size={25}
@@ -68,15 +69,17 @@ function SelectListRadio({ navigation }: any) {
 	}, []);
 	const selectCurrentList = useCallback((id) => {
 		setValue(id);
-		dispatch(setCurrentTodoList(id));
+		dispatch(selectTodoList(id));
 	}, []);
 	const editList = useCallback((id: string) => {
-		dispatch(setCurrentTodoList(id));
+		dispatch(selectTodoList(id));
 		navigation.navigate("EditList");
 	}, []);
 
 	// States
-	const todoLists: any[] = useSelector((state: RootState) => state.todoListReducer.todoLists);
+	const todoLists = useSelector((state: RootState) =>
+		Object.values(state.todoListReducer.todoLists)
+	);
 	const [value, setValue] = React.useState("");
 	const [addListAlertVisible, setAddListAlertVisible] = React.useState(false);
 	const [deleteListAlertVisible, setDeleteListAlertVisible] = React.useState(false);
@@ -84,8 +87,8 @@ function SelectListRadio({ navigation }: any) {
 
 	useFocusEffect(() => {
 		if (todoLists.length > 0 && value == "") {
-			setValue(todoLists[0]!.listID);
-			dispatch(setCurrentTodoList(todoLists[0]!.listID));
+			setValue(todoLists[0].listID);
+			dispatch(selectTodoList(todoLists[0].listID));
 		}
 	});
 

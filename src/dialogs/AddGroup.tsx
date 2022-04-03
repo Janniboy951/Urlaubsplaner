@@ -1,9 +1,7 @@
-import { alterCurrentTodoList } from "@/redux/reducers/TodoListReducer";
-import { RootState } from "@/redux/Store";
+import { addTodoGroup } from "@/redux/reducers/TodoListReducer";
 import React from "react";
 import { Button, Dialog, Portal, TextInput } from "react-native-paper";
-import { useDispatch, useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
+import { useDispatch } from "react-redux";
 
 function AddGroup({
 	alertVisible,
@@ -15,22 +13,10 @@ function AddGroup({
 	console.log("UPDATE");
 
 	const dispatch = useDispatch();
-	const { currentTodoList } = useSelector((state: RootState) => state.todoListReducer);
 
 	const submitAlert = () => {
 		dismissAlert();
-		let newGroup = {
-			id: uuidv4(),
-			title: newGroupName,
-			todos: [],
-		};
-		dispatch(
-			alterCurrentTodoList({
-				...currentTodoList,
-				todos: [...currentTodoList!.todos, newGroup],
-			})
-		);
-
+		dispatch(addTodoGroup(newGroupName));
 		setNewGroupName("");
 	};
 

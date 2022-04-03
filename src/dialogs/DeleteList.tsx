@@ -19,7 +19,9 @@ function DeleteList({
 	id: string;
 }) {
 	const dispatch = useDispatch();
-	const { currentTodoList } = useSelector((state: RootState) => state.todoListReducer);
+	const { currentSlowTodoList: currentTodoList } = useSelector(
+		(state: RootState) => state.todoListReducer
+	);
 
 	const deleteList = () => {
 		onDismiss();

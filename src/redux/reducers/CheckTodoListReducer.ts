@@ -1,4 +1,5 @@
 import { getCurrentDateTimeSting } from "@/helper/Date";
+import { objectWithoutKey } from "@/helper/Helper";
 import { PerformantTodoList } from "@/Types";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
@@ -8,11 +9,6 @@ interface CurrentTodoListState {
 	currentList?: PerformantTodoList;
 	todoLists: { [key: string]: PerformantTodoList };
 }
-
-const objectWithoutKey = (object: any, key: string) => {
-	const { [key]: deletedKey, ...otherKeys } = object;
-	return otherKeys;
-};
 
 // Define the initial state using that type
 const initialState: CurrentTodoListState = {

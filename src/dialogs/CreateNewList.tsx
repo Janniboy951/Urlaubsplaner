@@ -1,10 +1,5 @@
-import { addTodoList } from "@/redux/reducers/TodoListReducer";
 import React, { memo } from "react";
-import { Button, Dialog, Portal, TextInput } from "react-native-paper";
-import { useDispatch } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
-import { test } from "@/ExampleData";
-import { TodoList } from "@/Types";
+import { Button, Dialog, Portal } from "react-native-paper";
 import CreateNewListTextInput from "./CreateNewListTextInput";
 
 function CreateNewListDialog({ visible, onDismiss }: { visible: boolean; onDismiss: () => void }) {
