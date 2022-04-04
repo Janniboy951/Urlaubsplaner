@@ -1,4 +1,5 @@
-import { alterCurrentTodoList, deleteTodoList } from "@/redux/reducers/TodoListReducer";
+import { removeTodoList } from "@/redux/reducers/TodoListReducer";
+import { removeTodoList as removeCurrentTodolist } from "@/redux/reducers/CheckTodoListReducer";
 import { RootState } from "@/redux/Store";
 import React from "react";
 import { Button, Dialog, Paragraph, Portal } from "react-native-paper";
@@ -19,14 +20,11 @@ function DeleteList({
 	id: string;
 }) {
 	const dispatch = useDispatch();
-	const { currentSlowTodoList: currentTodoList } = useSelector(
-		(state: RootState) => state.todoListReducer
-	);
 
 	const deleteList = () => {
 		onDismiss();
-
-		dispatch(deleteTodoList(id));
+		dispatch(removeTodoList(id));
+		dispatch(removeCurrentTodolist(id));
 	};
 
 	return (

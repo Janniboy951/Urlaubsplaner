@@ -3,7 +3,7 @@ import { Button, Dialog, Portal } from "react-native-paper";
 import CreateNewListTextInput from "./CreateNewListTextInput";
 
 function CreateNewListDialog({ visible, onDismiss }: { visible: boolean; onDismiss: () => void }) {
-	console.log("rerender CreateNewListDialog");
+	// 	console.log("rerender CreateNewListDialog");
 	const textInputRef = React.useRef();
 
 	function okPress() {

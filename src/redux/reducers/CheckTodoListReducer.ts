@@ -3,6 +3,9 @@ import { objectWithoutKey } from "@/helper/Helper";
 import { PerformantTodoList } from "@/Types";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
+import _ from "lodash";
+
+const safeJsonCopy = <T>(inp: T): T => JSON.parse(JSON.stringify(inp));
 
 interface CurrentTodoListState {
 	currentListName: string;
@@ -25,26 +28,31 @@ const CurrentTodoListSlice = createSlice({
 			if (!(action.payload.listID in state.todoLists)) {
 				state.todoLists[action.payload.listID] = action.payload;
 			} else {
+				const newTodoList: PerformantTodoList = safeJsonCopy(
+					state.todoLists[action.payload.listID]
+				);
 				Object.values(action.payload.todos).forEach((part) => {
-					if (!(part.id in state.todoLists[action.payload.listID])) {
-						state.todoLists[action.payload.listID].todos[part.id] = part;
-						state.todoLists[action.payload.listID].totalTodoAmount += part.todoAmount;
+					if (!(part.id in newTodoList.todos)) {
+						newTodoList.todos[part.id] = part;
+						newTodoList.totalTodoAmount += Object.keys(part.todos).length;
 					} else {
 						Object.values(part.todos).forEach((todo) => {
-							if (
-								!(todo.id in state.todoLists[action.payload.listID].todos[part.id])
-							) {
-								state.todoLists[action.payload.listID].todos[part.id].todos[
-									todo.id
-								] = todo;
+							if (!(todo.id in newTodoList.todos[part.id].todos)) {
+								newTodoList.todos[part.id].todos[todo.id] = todo;
+								newTodoList.totalTodoAmount++;
+								newTodoList.todos[part.id].todoAmount++;
 							}
 						});
 					}
 				});
+				newTodoList.finishedTodoAmount =
+					state.todoLists[action.payload.listID].finishedTodoAmount;
+				state.todoLists[action.payload.listID] = safeJsonCopy(newTodoList);
 			}
 		},
 		removeTodoList(state, action: PayloadAction<string>) {
 			state.todoLists = objectWithoutKey(state.todoLists, action.payload);
+			console.log(state.todoLists);
 		},
 		selectTodoList(state, action: PayloadAction<string>) {
 			state.currentListName = action.payload;

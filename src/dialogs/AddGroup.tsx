@@ -10,7 +10,7 @@ function AddGroup({
 	alertVisible: boolean;
 	dismissAlert: () => void;
 }) {
-	console.log("UPDATE");
+	// 	console.log("UPDATE");
 
 	const dispatch = useDispatch();
 

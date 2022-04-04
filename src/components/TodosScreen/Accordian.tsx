@@ -22,7 +22,7 @@ function PartCheckBox({ checked }: { checked: boolean }): JSX.Element {
 const MemodAccordianHead = memo(AccordianHead);
 
 function AccordianHead({ expanded, id }: { expanded: boolean; id: string }) {
-	console.log("RENDER ACCORDIANHEAD");
+	// 	console.log("RENDER ACCORDIANHEAD");
 	const checked = useSelector(
 		(state: RootState) => state.checkTodoListReducer.currentList!.todos[id].checked
 	);
@@ -52,7 +52,7 @@ function Accordian({ id }: { id: string }) {
 		(l, r) => _.isEqual(l, r)
 	);
 
-	console.log("RERENDER ACCORDIAN");
+	// 	console.log("RERENDER ACCORDIAN");
 	function renderItem({ item }: { item: string }) {
 		return <Todo todoID={item} partID={id} />;
 	}

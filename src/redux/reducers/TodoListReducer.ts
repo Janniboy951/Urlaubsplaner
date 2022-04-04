@@ -51,6 +51,7 @@ const currentTodoListSlice = createSlice({
 		},
 		removeTodoList(state, action: PayloadAction<string>) {
 			state.todoLists = objectWithoutKey(state.todoLists, action.payload);
+			console.log(state.todoLists);
 		},
 		selectTodoList(state, action: PayloadAction<string>) {
 			state.currentTodoListName = action.payload;
@@ -84,7 +85,7 @@ const currentTodoListSlice = createSlice({
 			};
 			state.currentTodoList.todos[action.payload.partID].todoAmount++;
 			state.currentTodoList.totalTodoAmount++;
-			console.log(state.currentTodoList);
+			// 	console.log(state.currentTodoList);
 			state.todoLists[state.currentTodoListName] = state.currentTodoList;
 		},
 		removeTodo(state, action: PayloadAction<{ partID: string; todoID: string }>) {
@@ -109,7 +110,7 @@ const currentTodoListSlice = createSlice({
 		) {
 			let totalTodosAdded = 0;
 			const processedImport: { [key: string]: PerformantTodoPart } = {};
-			console.log(action.payload, processedImport);
+			// 	console.log(action.payload, processedImport);
 			action.payload.forEach((part) => {
 				const newPart: PerformantTodoPart = {
 					...emptyTodoPart,

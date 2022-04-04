@@ -19,16 +19,6 @@ function EditScreen({ navigation, route }: any) {
 
 	function WindowHeader({ listName, goBack }: { listName: string; goBack: any }) {
 		const [menuVisible, setMenuVisible] = React.useState(false);
-		function imported(v: any) {
-			console.log(v);
-			// dispatch(
-			// 	alterCurrentTodoList({
-			// 		...currentTodoList,
-			// 		todos: v,
-			// 	})
-			// );
-			// setListData(v);
-		}
 
 		return (
 			<Appbar.Header style={{ backgroundColor: "#fff" }}>

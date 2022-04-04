@@ -8,7 +8,7 @@ export async function saveFileAsync(text: string, folder: string, filename: stri
 		await MediaLibrary.requestPermissionsAsync();
 	}
 	let fileUri = FileSystem.documentDirectory + filename;
-	console.log(fileUri);
+	// 	console.log(fileUri);
 	await FileSystem.writeAsStringAsync(fileUri, text, {
 		encoding: FileSystem.EncodingType.UTF8,
 	});

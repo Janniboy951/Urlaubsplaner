@@ -27,7 +27,7 @@ export default function TodosScreen({ navigation }: any) {
 	useEffect(() => {
 		navigation.setOptions({ title: "Todos: " + listName });
 	}, []);
-	console.log("RENDER TODOSCREEN");
+	// 	console.log("RENDER TODOSCREEN");
 
 	return (
 		<View style={styles.container}>

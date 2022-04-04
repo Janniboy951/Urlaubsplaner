@@ -24,7 +24,7 @@ function Todo({ todoID, partID }: { todoID: string; partID: string }) {
 		await sleep(0); // Somehow its getting faster
 		dispatch(checkTodo({ partID, todoID }));
 	}
-	console.log("load todo");
+	// 	console.log("load todo");
 	return (
 		<View style={{ width: "100%" }}>
 			<TouchableOpacity style={styles.row} onPress={toggleCheck}>

@@ -78,7 +78,6 @@ function Accordian({
 		(l, r) => _.isEqual(l, r)
 	);
 
-	console.log(newTodos, "asd");
 	function renderItem({ item }: { item: PerformantTodo }) {
 		return <EditTodo todoID={item.id} partID={id} />;
 	}

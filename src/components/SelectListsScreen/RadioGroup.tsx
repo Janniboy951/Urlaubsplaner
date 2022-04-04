@@ -1,6 +1,7 @@
 import CreateNewListDialog from "@/dialogs/CreateNewList";
 import DeleteListDialog from "@/dialogs/DeleteList";
 import { removeTodoList, selectTodoList } from "@/redux/reducers/TodoListReducer";
+
 import { RootState } from "@/redux/Store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -22,8 +23,7 @@ function RadioItem({
 	onEdit: (id: string) => void;
 	onDelete: (id: string) => void;
 }) {
-	const dispatch = useDispatch();
-	console.log("rerender", "RadioItem");
+	// 	console.log("rerender", "RadioItem");
 	return (
 		<TouchableOpacity style={styles.radioButtonOpacity} onPress={() => onSelect(item.listID)}>
 			<View style={styles.radioButtonView}>
@@ -42,7 +42,7 @@ function RadioItem({
 						style={styles.radioButtonEdit}
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={() => dispatch(removeTodoList(item.listID))}>
+				<TouchableOpacity onPress={() => onDelete(item.listID)}>
 					<MaterialCommunityIcons
 						name="delete"
 						size={25}
@@ -58,7 +58,7 @@ const MemorizedRadioItem = React.memo(RadioItem);
 
 function SelectListRadio({ navigation }: any) {
 	const dispatch = useDispatch();
-	console.log("rerender", "SelectListRadio");
+	// 	console.log("rerender", "SelectListRadio");
 
 	// Callbacks
 	const dismissCreateNewList = useCallback(() => setAddListAlertVisible(false), []);

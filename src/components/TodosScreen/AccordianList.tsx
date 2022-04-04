@@ -30,7 +30,7 @@ function AccordianList() {
 			)
 	);
 
-	console.log("Load ACCORDIANLIST");
+	// 	console.log("Load ACCORDIANLIST");
 
 	return (
 		<View style={{ width: "100%" }}>

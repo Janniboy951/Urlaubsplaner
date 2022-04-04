@@ -28,7 +28,7 @@ export default function SelectListsScreen({ navigation }: any) {
 				mode="contained"
 				onPress={() => {
 					// if (Object.keys(editingTodoLists).indexOf(currentTodoList!.listID) == -1) {
-					// 	console.log("ADD to Lists");
+					// // 	console.log("ADD to Lists");
 					dispatch(addTodoList(currentTodoList));
 					// }
 
