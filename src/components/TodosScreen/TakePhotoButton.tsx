@@ -1,8 +1,11 @@
-import React from "react";
+import { tookPhoto } from "@/redux/reducers/CheckTodoListReducer";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { View, TouchableOpacity, Text, StyleSheet, PermissionsAndroid } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useDispatch } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 
 const takePicture = async () => {
 	if ((await (await ImagePicker.getCameraPermissionsAsync()).granted) == false) {
@@ -25,19 +28,43 @@ const takePicture = async () => {
 		let urlaubsplanerAlbum = await MediaLibrary.getAlbumAsync(albumName);
 
 		if (urlaubsplanerAlbum == null) {
-			MediaLibrary.createAlbumAsync(albumName, asset, false);
+			await MediaLibrary.createAlbumAsync(albumName, asset, false);
 		} else {
-			MediaLibrary.addAssetsToAlbumAsync(asset, urlaubsplanerAlbum, false);
+			await MediaLibrary.addAssetsToAlbumAsync(asset, urlaubsplanerAlbum, false);
 		}
+		return (
+			(
+				await MediaLibrary.getAssetsAsync({
+					album: urlaubsplanerAlbum,
+					sortBy: ["creationTime"],
+					first: 5,
+				})
+			).assets.filter(
+				(foundAsset) =>
+					foundAsset.filename == asset.filename &&
+					foundAsset.creationTime == asset.creationTime
+			)[0].uri || undefined
+		);
 	}
+	return undefined;
 };
 
-export default function TakePhotoButton({ color }: { color: string }) {
+export default function TakePhotoButton({
+	color,
+	partID,
+	todoID,
+}: {
+	color: string;
+	partID: string;
+	todoID: string;
+}) {
+	const dispatch = useDispatch();
 	return (
 		<View>
 			<TouchableOpacity
-				onPress={() => {
-					takePicture();
+				onPress={async () => {
+					const pictureUri = await takePicture();
+					dispatch(tookPhoto({ partID: partID, todoID: todoID, pictureUri: pictureUri }));
 				}}
 			>
 				<MaterialCommunityIcons name="camera" size={25} color={color} />

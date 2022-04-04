@@ -39,6 +39,7 @@ export interface PerformantTodo {
 	finished?: boolean;
 	finishedAt?: string;
 	pictureNeeded?: boolean;
+	pictureUri?: string;
 }
 
 export interface TodoIDs {

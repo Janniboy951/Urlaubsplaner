@@ -1,5 +1,8 @@
 import AccordianList from "@/components/TodosScreen/AccordianList";
 import TodoProgressBar from "@/components/TodosScreen/TodoProgressBar";
+import { getCurrentDateTimeSting } from "@/helper/Date";
+import { generateResultExcel } from "@/helper/Excel";
+import { shareExcelFile } from "@/helper/FileManager";
 import { removeTodoList } from "@/redux/reducers/CheckTodoListReducer";
 import { RootState } from "@/redux/Store";
 import React, { useEffect } from "react";
@@ -15,7 +18,7 @@ export default function TodosScreen({ navigation }: any) {
 	const listID = useSelector(
 		(state: RootState) => state.checkTodoListReducer.currentList!.listID
 	);
-	const { finishedTodoAmount, totalTodoAmount } = useSelector(
+	const finishedList = useSelector(
 		(state: RootState) => state.checkTodoListReducer.currentList!,
 		(l, r) =>
 			(l.finishedTodoAmount == l.totalTodoAmount) ==
@@ -27,7 +30,7 @@ export default function TodosScreen({ navigation }: any) {
 	useEffect(() => {
 		navigation.setOptions({ title: "Todos: " + listName });
 	}, []);
-	// 	console.log("RENDER TODOSCREEN");
+	console.log("RENDER TODOSCREEN");
 
 	return (
 		<View style={styles.container}>
@@ -35,11 +38,20 @@ export default function TodosScreen({ navigation }: any) {
 
 			<AccordianList />
 			<FAB
-				visible={finishedTodoAmount == totalTodoAmount}
+				visible={finishedList.finishedTodoAmount == finishedList.totalTodoAmount}
 				icon="briefcase-check-outline"
 				style={styles.fab}
 				color="white"
-				onPress={() => {
+				onPress={async () => {
+					await shareExcelFile(
+						await generateResultExcel(
+							`Urlaubsplaner-TodoListe-${
+								finishedList.listName
+							}-${getCurrentDateTimeSting()}.xlsx`,
+							finishedList
+						)
+					);
+					// maybe need to remove currentTodolist too
 					dispatch(removeTodoList(listID));
 					navigation.goBack();
 				}}

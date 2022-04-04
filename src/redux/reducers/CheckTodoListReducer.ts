@@ -78,12 +78,22 @@ const CurrentTodoListSlice = createSlice({
 				state.currentList!.todos[partID].todoAmount;
 			state.todoLists[state.currentListName] = state.currentList!;
 		},
+		tookPhoto(
+			state,
+			action: PayloadAction<{ partID: string; todoID: string; pictureUri?: string }>
+		) {
+			if (action.payload.pictureUri) {
+				const { partID, todoID } = action.payload;
+				const currentTodo = state.currentList!.todos[partID].todos[todoID];
+				currentTodo.pictureUri = action.payload.pictureUri;
+			}
+		},
 	},
 });
 
 // Extract the action creators object and the reducer
 const { actions, reducer } = CurrentTodoListSlice;
 // Extract and export each action creator by name
-export const { addTodoList, removeTodoList, selectTodoList, checkTodo } = actions;
+export const { addTodoList, removeTodoList, selectTodoList, checkTodo, tookPhoto } = actions;
 // Export the reducer, either as a default or named export
 export default reducer;

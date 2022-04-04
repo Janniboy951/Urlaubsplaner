@@ -31,6 +31,16 @@ export async function shareFileAsync(text: string, filename: string) {
 	}
 }
 
+export async function shareExcelFile(excelFileUri: string) {
+	shareAsync(excelFileUri, {
+		mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		dialogTitle: "Save finished list",
+		UTI: "com.microsoft.excel.xlsx", // iOS
+	}).catch((error) => {
+		console.error("Error", error);
+	});
+}
+
 export async function readFileAsync() {
 	let f = await getDocumentAsync({
 		type: ["text/plain", "application/json"],

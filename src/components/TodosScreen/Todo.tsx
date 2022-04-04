@@ -35,7 +35,11 @@ function Todo({ todoID, partID }: { todoID: string; partID: string }) {
 					/>
 					<Text style={styles.title}>{thisTodo.title}</Text>
 				</View>
-				<TakePhotoButton color={thisTodo.pictureNeeded ? "red" : "black"} />
+				<TakePhotoButton
+					color={thisTodo.pictureUri ? "green" : thisTodo.pictureNeeded ? "red" : "black"}
+					todoID={todoID}
+					partID={partID}
+				/>
 			</TouchableOpacity>
 		</View>
 	);
