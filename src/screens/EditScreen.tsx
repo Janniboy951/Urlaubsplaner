@@ -1,6 +1,6 @@
 import Accordian from "@/components/EditListsScreen/Accordian";
 import { getCurrentDateTimeSting } from "@/helper/Date";
-import { readFileAsync, shareFileAsync } from "@/helper/FileManager";
+import { readFileAsync, readCsvFileAsync, shareFileAsync } from "@/helper/FileManager";
 import { RootState } from "@/redux/Store";
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
@@ -60,6 +60,33 @@ function EditScreen({ navigation, route }: any) {
 							shareFileAsync(
 								JSON.stringify(res),
 								`Export-${currentTodoList?.listName.toString()} ${getCurrentDateTimeSting()}.json`
+							);
+							setMenuVisible(false);
+						}}
+					/>
+					<Menu.Item
+						title="Importieren (CSV)"
+						onPress={async () => {
+							const v = await readCsvFileAsync();
+							dispatch(importTodos(v));
+						}}
+					/>
+					<Menu.Item
+						title="Exportieren (CSV)"
+						onPress={() => {
+							const res: any[] = [];
+							Object.values(currentTodoList.todos).forEach((part) => {
+								Object.values(part.todos).forEach((todo) => {
+									res.push(
+										`${part.title};${todo.title};${
+											todo.pictureNeeded ? "1" : "0"
+										}`
+									);
+								});
+							});
+							shareFileAsync(
+								res.join("\n"),
+								`Export-${currentTodoList?.listName.toString()} ${getCurrentDateTimeSting()}.csv`
 							);
 							setMenuVisible(false);
 						}}

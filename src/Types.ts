@@ -47,6 +47,13 @@ export interface TodoIDs {
 	partID: string;
 	todoID: string;
 }
+export type IO_TodoList = {
+	title: string;
+	todos: {
+		title: string;
+		pictureNeeded: boolean;
+	}[];
+}[];
 
 export function convertToPerformant(todoList: TodoList): PerformantTodoList {
 	const newTodoList: PerformantTodoList = {

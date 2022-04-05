@@ -2,6 +2,7 @@ import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import { isAvailableAsync as isShareAvailableAsync, shareAsync } from "expo-sharing";
 import { getDocumentAsync } from "expo-document-picker";
+import { IO_TodoList } from "@/Types";
 
 export async function saveFileAsync(text: string, folder: string, filename: string) {
 	if ((await MediaLibrary.getPermissionsAsync()).granted == false) {
@@ -41,6 +42,32 @@ export async function shareExcelFile(excelFileUri: string) {
 	});
 }
 
+export async function readCsvFileAsync() {
+	let f = await getDocumentAsync();
+	if (f.type == "success") {
+		const str = await FileSystem.readAsStringAsync(f.uri, { encoding: "utf8" });
+		const data = str.split("\n");
+		data.shift(); // remove first line
+
+		const todos: IO_TodoList = [];
+		let prevGroup: string | undefined = undefined;
+		data.forEach((line: string) => {
+			const splitted = line.split(";");
+			if (splitted[0] && splitted[1]) {
+				if (splitted[0] !== prevGroup) {
+					todos.push({ title: splitted[0], todos: [] });
+					prevGroup = splitted[0];
+				}
+				todos[todos.length - 1].todos.push({
+					title: splitted[1],
+					pictureNeeded: splitted[2][0] == "1",
+				});
+			}
+		});
+		return todos;
+	}
+	return [];
+}
 export async function readFileAsync() {
 	let f = await getDocumentAsync({
 		type: ["text/plain", "application/json"],

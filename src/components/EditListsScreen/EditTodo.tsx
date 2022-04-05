@@ -52,6 +52,8 @@ const styles = StyleSheet.create({
 		fontSize: 18,
 		color: "#666666",
 		marginLeft: 10,
+		flexWrap: "wrap",
+		width: 220,
 	},
 	row: {
 		flexDirection: "row",

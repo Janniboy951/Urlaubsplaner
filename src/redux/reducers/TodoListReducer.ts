@@ -1,5 +1,11 @@
 import { objectWithoutKey } from "@/helper/Helper";
-import { PerformantTodo, PerformantTodoList, PerformantTodoPart, TodoList } from "@/Types";
+import {
+	IO_TodoList,
+	PerformantTodo,
+	PerformantTodoList,
+	PerformantTodoPart,
+	TodoList,
+} from "@/Types";
 // import { ActionTypes } from "@/redux/reducers/TodoListReducer";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
@@ -97,17 +103,7 @@ const currentTodoListSlice = createSlice({
 			state.currentTodoList.totalTodoAmount--;
 			state.todoLists[state.currentTodoListName] = state.currentTodoList;
 		},
-		importTodos(
-			state,
-			action: PayloadAction<
-				{
-					title: string;
-					todos: {
-						title: string;
-					}[];
-				}[]
-			>
-		) {
+		importTodos(state, action: PayloadAction<IO_TodoList>) {
 			let totalTodosAdded = 0;
 			const processedImport: { [key: string]: PerformantTodoPart } = {};
 			// 	console.log(action.payload, processedImport);
@@ -120,7 +116,11 @@ const currentTodoListSlice = createSlice({
 				};
 				part.todos.forEach((todo) => {
 					const newUUID = uuidv4();
-					newPart.todos[newUUID] = { id: newUUID, title: todo.title };
+					newPart.todos[newUUID] = {
+						id: newUUID,
+						title: todo.title,
+						pictureNeeded: todo.pictureNeeded,
+					};
 					newPart.todoAmount++;
 					totalTodosAdded++;
 				});
