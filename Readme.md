@@ -6,6 +6,8 @@
 </p>
 
 ## Import Data
+Choose a list, click edit, tap the 3dots button on the right, select `Import` or `Import (CSV)`
+
 ### From CSV
 
 Format (The first line will be ignored):
