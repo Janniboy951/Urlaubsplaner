@@ -25,6 +25,9 @@ jobs:
         expo-version: latest
     - name: Expo Eject
       run: expo eject
+    
+    - name: 📦 Install dependencies
+      run: yarn install
       
     - name: set up JDK 11
       uses: actions/setup-java@v3
