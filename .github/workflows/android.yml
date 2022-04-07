@@ -13,21 +13,26 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
+    # *******Setup Node and Expo*******
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.1.0
+      with:
+        node-version: '16'
+    - name: 🏗 Setup Expo
+      uses: expo/expo-github-action@v7
+      with:
+        expo-version: latest
+    - name: Expo Eject
+      run: expo eject
+      
     - name: set up JDK 11
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v3.1.0
-      with:
-        node-version: '16'
-    
-    - name: 🏗 Setup Expo
-      uses: expo/expo-github-action@v7
-      with:
-        expo-version: latest
+
     - name: Grant execute permission for gradlew
       run: chmod +x android/gradlew
     - name: Build with Gradle
