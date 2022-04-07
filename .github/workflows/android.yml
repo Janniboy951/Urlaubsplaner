@@ -62,7 +62,10 @@ jobs:
         
     - name: Sign APK
       working-directory: ./android/app/build/outputs/apk/release
-      run: apksigner sign --ks release_keystore.jks --out app-release-signed.apk app-release.apk
+      run: apksigner sign --ks release_keystore.jks --ks-key-alias '${{ secrets.KEY_ALIAS }}' --ks-pass pass:'${{ secrets.KEYSTORE_PASSWORD }}' --key-pass pass:'${{ secrets.KEY_PASSWORD }}' --out app-release-signed.apk app-release.apk
+
+
+      #run: apksigner sign --ks release_keystore.jks --out app-release-signed.apk app-release.apk
     
     - name: Create Release
       uses: actions/create-release@v1
