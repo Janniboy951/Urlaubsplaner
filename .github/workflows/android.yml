@@ -42,7 +42,7 @@ jobs:
       run: cd android
 
     - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
+      run: ls -la
     - name: Build with Gradle
       run: ./gradlew assembleRelease 
     
