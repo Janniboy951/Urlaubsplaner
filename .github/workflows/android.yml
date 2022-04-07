@@ -23,11 +23,13 @@ jobs:
       uses: expo/expo-github-action@v7
       with:
         expo-version: latest
+        
+    - name: 📦 Install dependencies
+      run: yarn install
     - name: Expo Eject
       run: expo eject
     
-    - name: 📦 Install dependencies
-      run: yarn install
+
       
     - name: set up JDK 11
       uses: actions/setup-java@v3
