@@ -28,7 +28,7 @@ function AddGroup({
 				<Dialog.Content>
 					<TextInput
 						label="Name"
-						value={newGroupName}
+						defaultValue=""
 						mode="outlined"
 						onChangeText={(text) => setNewGroupName(text)}
 					></TextInput>

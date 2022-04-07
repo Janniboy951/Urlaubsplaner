@@ -27,7 +27,7 @@ export default function AddTodo({ partID }: { partID: string }) {
 					<Dialog.Content>
 						<TextInput
 							label="Name"
-							value={newElementName}
+							defaultValue=""
 							mode="outlined"
 							onChangeText={(text) => setNewElementName(text)}
 						></TextInput>

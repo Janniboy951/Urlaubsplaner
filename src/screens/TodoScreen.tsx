@@ -28,7 +28,7 @@ export default function TodosScreen({ navigation }: any) {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		navigation.setOptions({ title: "Todos: " + listName });
+		navigation.setOptions({ title: listName });
 	}, []);
 	console.log("RENDER TODOSCREEN");
 
