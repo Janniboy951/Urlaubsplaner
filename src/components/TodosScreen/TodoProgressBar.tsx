@@ -1,5 +1,4 @@
 import { RootState } from "@/redux/Store";
-import _ from "lodash";
 import React from "react";
 import { View } from "react-native";
 import { Colors, ProgressBar } from "react-native-paper";

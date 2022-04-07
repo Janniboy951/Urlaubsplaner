@@ -22,7 +22,7 @@ function CreateNewListTextInput(props: any, ref: any) {
 	return (
 		<TextInput
 			label="Name"
-			value={newListName}
+			defaultValue=""
 			mode="outlined"
 			onChangeText={(text) => setNewListName(text)}
 		/>

@@ -16,8 +16,7 @@ export default function AddTodo({ partID }: { partID: string }) {
 		setAlertVisible(false);
 		dispatch(addTodo({ name: newElementName, partID: partID }));
 		setNewElementName("");
-	}; // setData((prevValue: any) => [...prevValue, newGroup]);
-	// data.push(newGroup);
+	};
 
 	return (
 		<View style={{ width: "100%" }}>

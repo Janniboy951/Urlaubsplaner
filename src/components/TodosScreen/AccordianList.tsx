@@ -1,6 +1,6 @@
 import { RootState } from "@/redux/Store";
 import { PerformantTodoPart } from "@/Types";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
 import React, { memo } from "react";
 import { FlatList, View } from "react-native";
 import { useSelector } from "react-redux";
@@ -24,7 +24,7 @@ function AccordianList() {
 	const currentTodoList = useSelector(
 		(state: RootState) => Object.values(state.checkTodoListReducer.currentList!.todos),
 		(l, r) =>
-			_.isEqual(
+			isEqual(
 				l.map((v) => v.id),
 				r.map((v) => v.id)
 			)

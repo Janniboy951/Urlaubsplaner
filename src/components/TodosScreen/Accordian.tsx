@@ -6,7 +6,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/build/MaterialCommunityIc
 import FontAwesome from "@expo/vector-icons/build/FontAwesome";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/Store";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
 
 function PartCheckBox({ checked }: { checked: boolean }): JSX.Element {
 	if (checked) {
@@ -49,7 +49,7 @@ function Accordian({ id }: { id: string }) {
 	const newTodos = useSelector(
 		(state: RootState) =>
 			Object.values(state.checkTodoListReducer.currentList!.todos[id].todos).map((v) => v.id),
-		(l, r) => _.isEqual(l, r)
+		(l, r) => isEqual(l, r)
 	);
 
 	// 	console.log("RERENDER ACCORDIAN");
@@ -78,7 +78,7 @@ function Accordian({ id }: { id: string }) {
 	);
 }
 
-export default memo(Accordian, (prev, next) => _.isEqual(prev, next));
+export default memo(Accordian, (prev, next) => isEqual(prev, next));
 
 const styles = StyleSheet.create({
 	title: {

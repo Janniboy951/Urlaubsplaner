@@ -2,7 +2,7 @@ import DeleteGroupDialog from "@/dialogs/DeleteGroup";
 import { RootState } from "@/redux/Store";
 import { PerformantTodo, PerformantTodoPart } from "@/Types";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
 import React, { Dispatch, memo, SetStateAction } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
@@ -75,7 +75,7 @@ function Accordian({
 
 	const newTodos = useSelector(
 		(state: RootState) => Object.values(state.todoListReducer.currentTodoList.todos[id].todos),
-		(l, r) => _.isEqual(l, r)
+		(l, r) => isEqual(l, r)
 	);
 
 	function renderItem({ item }: { item: PerformantTodo }) {
@@ -127,7 +127,7 @@ function AccordianList({
 	const currentTodoList = useSelector(
 		(state: RootState) => Object.values(state.todoListReducer.currentTodoList.todos),
 		(l, r) =>
-			_.isEqual(
+			isEqual(
 				l.map((v) => v.id),
 				r.map((v) => v.id)
 			)

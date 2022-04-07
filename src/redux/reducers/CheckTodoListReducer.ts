@@ -1,9 +1,7 @@
 import { getCurrentDateTimeSting } from "@/helper/Date";
 import { objectWithoutKey } from "@/helper/Helper";
 import { PerformantTodoList } from "@/Types";
-import { PayloadAction } from "@reduxjs/toolkit";
-import { createSlice } from "@reduxjs/toolkit";
-import _ from "lodash";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const safeJsonCopy = <T>(inp: T): T => JSON.parse(JSON.stringify(inp));
 
