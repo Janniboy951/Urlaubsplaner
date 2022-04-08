@@ -23,6 +23,7 @@ export interface PerformantTodoList {
 	listID: string;
 	totalTodoAmount: number;
 	finishedTodoAmount: number;
+	finished?: boolean;
 	todos: { [id: string]: PerformantTodoPart };
 }
 export interface PerformantTodoPart {

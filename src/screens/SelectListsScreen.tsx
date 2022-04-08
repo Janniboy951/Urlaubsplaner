@@ -14,9 +14,6 @@ export default function SelectListsScreen({ navigation }: any) {
 	const currentTodoList = useSelector(
 		(state: RootState) => state.todoListReducer.currentTodoList
 	);
-	const editingTodoLists = useSelector(
-		(state: RootState) => state.checkTodoListReducer.todoLists
-	);
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Liste auswählen</Text>
@@ -27,11 +24,7 @@ export default function SelectListsScreen({ navigation }: any) {
 				icon="check"
 				mode="contained"
 				onPress={() => {
-					// if (Object.keys(editingTodoLists).indexOf(currentTodoList!.listID) == -1) {
-					// // 	console.log("ADD to Lists");
 					dispatch(addTodoList(currentTodoList));
-					// }
-
 					dispatch(selectTodoList(currentTodoList!.listID));
 					navigation.navigate("Todos");
 				}}

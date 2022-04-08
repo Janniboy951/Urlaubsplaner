@@ -74,6 +74,13 @@ const CurrentTodoListSlice = createSlice({
 			state.currentList!.todos[partID].checked =
 				state.currentList!.todos[partID].checkedAmount ==
 				state.currentList!.todos[partID].todoAmount;
+			if (
+				state.currentList!.finished !=
+				(state.currentList!.finishedTodoAmount == state.currentList!.totalTodoAmount)
+			) {
+				state.currentList!.finished =
+					state.currentList!.finishedTodoAmount == state.currentList!.totalTodoAmount;
+			}
 			state.todoLists[state.currentListName] = state.currentList!;
 		},
 		tookPhoto(

@@ -3,8 +3,10 @@ import DeleteListDialog from "@/dialogs/DeleteList";
 import { removeTodoList, selectTodoList } from "@/redux/reducers/TodoListReducer";
 
 import { RootState } from "@/redux/Store";
+import { PerformantTodoList } from "@/Types";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
+import isEqual from "lodash/isEqual";
 import React, { useCallback } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import "react-native-get-random-values";
@@ -23,14 +25,17 @@ function RadioItem({
 	onEdit: (id: string) => void;
 	onDelete: (id: string) => void;
 }) {
-	// 	console.log("rerender", "RadioItem");
+	const listFinished: boolean | undefined = useSelector(
+		(state: RootState) => state.checkTodoListReducer.todoLists[item.listID]?.finished
+	);
+	console.log("RED", listFinished);
 	return (
 		<TouchableOpacity style={styles.radioButtonOpacity} onPress={() => onSelect(item.listID)}>
 			<View style={styles.radioButtonView}>
 				<MaterialCommunityIcons
 					name={checked ? "radiobox-marked" : "radiobox-blank"}
 					size={25}
-					color="blue"
+					color={listFinished != undefined ? (listFinished ? "green" : "orange") : "blue"}
 				/>
 				<Text style={styles.radioButtonText}>{item.listName}</Text>
 			</View>
@@ -54,7 +59,15 @@ function RadioItem({
 		</TouchableOpacity>
 	);
 }
-const MemorizedRadioItem = React.memo(RadioItem);
+const MemorizedRadioItem = React.memo(RadioItem, (l, r) => {
+	const areEqual =
+		l.onDelete == r.onDelete &&
+		l.onEdit == r.onEdit &&
+		l.onSelect == r.onSelect &&
+		l.checked == r.checked &&
+		l.item == r.item;
+	return areEqual;
+});
 
 function SelectListRadio({ navigation }: any) {
 	const dispatch = useDispatch();
@@ -77,8 +90,9 @@ function SelectListRadio({ navigation }: any) {
 	}, []);
 
 	// States
-	const todoLists = useSelector((state: RootState) =>
-		Object.values(state.todoListReducer.todoLists)
+	const todoLists = useSelector(
+		(state: RootState) => Object.values(state.todoListReducer.todoLists),
+		(l, r) => isEqual(l, r)
 	);
 	const [value, setValue] = React.useState("");
 	const [addListAlertVisible, setAddListAlertVisible] = React.useState(false);
@@ -116,7 +130,7 @@ function SelectListRadio({ navigation }: any) {
 			/>
 		);
 	}
-
+	console.log("REDERN123");
 	return (
 		<>
 			<FlatList
