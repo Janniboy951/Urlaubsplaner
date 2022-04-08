@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Install sharp-cli
-      run: sudo apt-get install sharp-cli
+      run: yarn global add sharp-cli
     
     # *******Setup Node and Expo*******
     - name: Setup Node.js environment
