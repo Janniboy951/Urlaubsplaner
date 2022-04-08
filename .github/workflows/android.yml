@@ -23,14 +23,11 @@ jobs:
       uses: expo/expo-github-action@v7
       with:
         expo-version: latest
-        token: ${{ secrets.EXPO }}
         
     - name: 📦 Install dependencies
       run: yarn install
     - name: Expo Eject
       run: expo eject
-    
-
       
     - name: set up JDK 11
       uses: actions/setup-java@v3
@@ -53,12 +50,9 @@ jobs:
     - name: Decrypt JKS Keystore
       run: gpg -d --passphrase '${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}' --batch release.keystore.asc > android/app/build/outputs/apk/release/release_keystore.jks
     
-    - name: Install zipalign and apksigner
-      run: sudo apt-get install -y zipalign apksigner
+    - name: Install apksigner
+      run: sudo apt-get install -y apksigner
     
-  #  - name: Zipalign APK
-  #    working-directory: ./android/app/build/outputs/apk/release
-  #    run: zipalign -v -p 4 app-release.apk app-release-aligned.apk
         
     - name: Sign APK
       working-directory: ./android/app/build/outputs/apk/release
