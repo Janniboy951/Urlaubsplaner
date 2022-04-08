@@ -14,6 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    - name: Install sharp-cli
+      run: sudo apt-get install sharp-cli
+    
     # *******Setup Node and Expo*******
     - name: Setup Node.js environment
       uses: actions/setup-node@v3.1.0
