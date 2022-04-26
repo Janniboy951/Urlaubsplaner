@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
-
 export interface TodoList {
 	listName: string;
 	listID: string;
@@ -55,31 +53,3 @@ export type IO_TodoList = {
 		pictureNeeded: boolean;
 	}[];
 }[];
-
-export function convertToPerformant(todoList: TodoList): PerformantTodoList {
-	const newTodoList: PerformantTodoList = {
-		...todoList,
-		totalTodoAmount: 0,
-		finishedTodoAmount: 0,
-		todos: {},
-	};
-	let newTotalTodos = 0;
-
-	todoList.todos.forEach((todoPart) => {
-		const newTodoPart: PerformantTodoPart = {
-			...todoPart,
-			todos: {},
-			checkedAmount: 0,
-			checked: false,
-			todoAmount: todoPart.todos.length,
-		};
-		todoPart.todos.forEach((todo) => {
-			const newUUID = uuidv4();
-			newTotalTodos++;
-			newTodoPart.todos[newUUID] = { ...todo, id: newUUID };
-		});
-		newTodoList.todos[todoPart.id] = newTodoPart;
-	});
-	newTodoList.totalTodoAmount = newTotalTodos;
-	return newTodoList;
-}

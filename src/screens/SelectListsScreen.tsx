@@ -2,7 +2,6 @@ import RadioGroup from "@/components/SelectListsScreen/RadioGroup";
 import SeasonSwitch from "@/components/SelectListsScreen/SeasonSwitch";
 import { addTodoList, selectTodoList } from "@/redux/reducers/CheckTodoListReducer";
 import { RootState } from "@/redux/Store";
-import { convertToPerformant } from "@/Types";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import "react-native-gesture-handler";
